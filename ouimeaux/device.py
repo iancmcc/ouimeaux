@@ -1,10 +1,12 @@
-from gevent import monkey
-from ouimeaux.service import Service
+import logging
 
-monkey.patch_socket()
 import requests
 
+from ouimeaux.service import Service
 from ouimeaux.xsd import device as deviceParser
+
+
+log = logging.getLogger(__name__)
 
 
 class Device(object):

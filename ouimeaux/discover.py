@@ -1,22 +1,21 @@
 import logging
 
 import gevent
+
 from ouimeaux.motion import Motion
 from ouimeaux.switch import Switch
-
 from ouimeaux.upnp import UPnP
 
-log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
-NOOP = lambda *x: None
+_NOOP = lambda *x: None
+log = logging.getLogger(__name__)
 
 
 class StopBroadcasting(Exception): pass
 
 
 class Manager(object):
-    def __init__(self, switch_callback=NOOP, motion_callback=NOOP):
+    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP):
         self.upnp = UPnP(self._found_device)
         self._switch_callback = switch_callback
         self._motion_callback = motion_callback
@@ -52,5 +51,4 @@ class Manager(object):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
     manager = Manager()
