@@ -17,8 +17,11 @@ setup(name='ouimeaux',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
+      dependency_links = [
+          'https://github.com/downloads/SiteSupport/gevent/gevent-1.0rc2.tar.gz#egg=gevent-1.0.rc2'
+      ],
       install_requires=[
-          # -*- Extra requirements: -*-
+          'gevent >= 1.0rc2',
       ],
       entry_points="""
       # -*- Entry points: -*-
