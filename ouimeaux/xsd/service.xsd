@@ -1,0 +1,93 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="urn:schemas-upnp-org:service-1-0" 
+  targetNamespace="urn:schemas-upnp-org:service-1-0"
+  elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      XML Schema for UPnP service descriptions in real XSD format
+      (not like the XDR one from Microsoft)
+      Created by Michael Weinrich 2007
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="scpd">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="specVersion" type="SpecVersionType" minOccurs="1" maxOccurs="1" />
+        <xs:element name="actionList" type="ActionListType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="serviceStateTable" type="ServiceStateTableType" minOccurs="1" maxOccurs="1" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="SpecVersionType">
+    <xs:all>
+      <xs:element name="major" type="xs:int" minOccurs="1" />
+      <xs:element name="minor" type="xs:int" minOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ActionListType">
+    <xs:sequence>
+      <xs:element name="action" type="ActionType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActionType">
+    <xs:all>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="argumentList" type="ArgumentListType" minOccurs="0" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ArgumentListType">
+    <xs:sequence>
+      <xs:element name="argument" type="ArgumentType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ArgumentType">
+    <xs:all>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="direction" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="relatedStateVariable" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="retval" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ServiceStateTableType">
+    <xs:sequence>
+      <xs:element name="stateVariable" type="StateVariableType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="StateVariableType">
+    <xs:all>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="dataType" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="defaultValue" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="allowedValueList" type="AllowedValueListType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="allowedValueRange" type="AllowedValueRangeType" minOccurs="0" maxOccurs="1" />
+    </xs:all>
+    <xs:attribute name="sendEvents" type="xs:string" default="yes" />
+  </xs:complexType>
+
+  <xs:complexType name="AllowedValueListType">
+    <xs:sequence>
+      <xs:element name="allowedValue" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AllowedValueRangeType">
+    <xs:all>
+      <xs:element name="minimum" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+      <xs:element name="maximum" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+      <xs:element name="step" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  targetNamespace="urn:schemas-upnp-org:device-1-0"
+  xmlns:tns="urn:schemas-upnp-org:device-1-0"
+  xmlns="urn:schemas-upnp-org:device-1-0"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  attributeFormDefault="qualified" elementFormDefault="qualified">
+ 
+  <xs:annotation>
+    <xs:documentation>
+      XML Schema for UPnP device descriptions in real XSD format
+      (not like the XDR one from Microsoft)
+      Created by Michael Weinrich 2007
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="specVersion" type="SpecVersionType" minOccurs="1" maxOccurs="1" />
+        <xs:element name="URLBase" type="xs:string" minOccurs="0" maxOccurs="1" />
+        <xs:element name="device" type="DeviceType" minOccurs="1" maxOccurs="1" />
+      </xs:all>
+      <xs:anyAttribute/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="SpecVersionType">
+    <xs:all>
+      <xs:element name="major" type="xs:int" minOccurs="1" />
+      <xs:element name="minor" type="xs:int" minOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="DeviceType">
+    <xs:sequence>
+      <xs:element name="deviceType" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="friendlyName" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="manufacturer" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="manufacturerURL" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="modelDescription" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="modelName" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="modelNumber" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="modelURL" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="serialNumber" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="UDN" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="UPC" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="iconList" type="IconListType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="serviceList" type="ServiceListType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="deviceList" type="DeviceListType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="presentationURL" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+ 
+  <xs:complexType name="IconListType">
+    <xs:sequence>
+      <xs:element name="icon" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="mimetype" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="width" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="height" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="depth" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="url" type="xs:string" minOccurs="1" maxOccurs="1" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ServiceListType">
+    <xs:sequence>
+      <xs:element name="service" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="serviceType" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="serviceId" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="SCPDURL" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="controlURL" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="eventSubURL" type="xs:string" minOccurs="1" maxOccurs="1" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DeviceListType">
+    <xs:sequence>
+      <xs:element name="device" type="DeviceType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+ 	 
+</xs:schema>
