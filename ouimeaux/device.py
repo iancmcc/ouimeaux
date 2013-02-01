@@ -9,6 +9,9 @@ from ouimeaux.xsd import device as deviceParser
 log = logging.getLogger(__name__)
 
 
+class UnknownService(Exception): pass
+
+
 class Device(object):
     def __init__(self, url):
         base_url = url.rsplit('/', 1)[0]
@@ -21,7 +24,13 @@ class Device(object):
             self.services[svcname] = Service(svc, base_url)
 
     def get_service(self, name):
-        return self.services.get(name, None)
+        try:
+            return self.services[name]
+        except KeyError:
+            raise UnknownService(name)
+
+    def list_services(self):
+        return self.services.keys()
 
     @property
     def model(self):
@@ -38,7 +47,7 @@ class Device(object):
 
 def test():
     device = Device("http://10.42.1.102:49152/setup.xml")
-    print device.get_service('basicevent').SetBinaryState(BinaryState=0)
+    print device.get_service('basicevent').SetBinaryState(BinaryState=1)
 
 
 if __name__ == "__main__":

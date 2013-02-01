@@ -12,9 +12,10 @@ log = logging.getLogger(__name__)
 
 
 class StopBroadcasting(Exception): pass
+class UnknownDevice(Exception): pass
 
 
-class Manager(object):
+class Environment(object):
     def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP):
         self.upnp = UPnP(self._found_device)
         self._switch_callback = switch_callback
@@ -49,6 +50,25 @@ class Manager(object):
             self.motions[motion.name] = motion
             self._motion_callback(motion)
 
+    def list_switches(self):
+        return self.switches.keys()
+
+    def list_motions(self):
+        return self.motions.keys()
+
+    def get_switch(self, name):
+        try:
+            return self.switches[name]
+        except KeyError:
+            raise UnknownDevice(name)
+
+    def get_motion(self, name):
+        try:
+            return self.motions[name]
+        except KeyError:
+            raise UnknownDevice(name)
+
 
 if __name__ == "__main__":
-    manager = Manager()
+    # Use with python -i
+    environment = Environment()
