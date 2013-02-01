@@ -2,8 +2,19 @@ from xml.etree import cElementTree as et
 
 import requests
 
-from ouimeaux.device import REQUEST_TEMPLATE
 from ouimeaux.xsd import service as serviceParser
+
+
+REQUEST_TEMPLATE = """
+<?xml version="1.0" encoding="utf-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+ <s:Body>
+  <u:{action} xmlns:u="{service}">
+   {args}
+  </u:{action}>
+ </s:Body>
+</s:Envelope>
+"""
 
 
 class Service(object):

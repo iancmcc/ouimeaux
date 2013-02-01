@@ -22,6 +22,7 @@ setup(name='ouimeaux',
       ],
       install_requires=[
           'gevent >= 1.0rc2',
+          'requests'
       ],
       entry_points="""
       # -*- Entry points: -*-

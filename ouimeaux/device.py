@@ -7,18 +7,6 @@ import requests
 from ouimeaux.xsd import device as deviceParser
 
 
-REQUEST_TEMPLATE = """
-<?xml version="1.0" encoding="utf-8"?>
-<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
- <s:Body>
-  <u:{action} xmlns:u="{service}">
-   {args}
-  </u:{action}>
- </s:Body>
-</s:Envelope>
-"""
-
-
 class Device(object):
     def __init__(self, url):
         base_url = url.rsplit('/', 1)[0]
