@@ -3,7 +3,14 @@ ouimeaux
 ========
 
 ouimeaux is a Python interface to `Belkin WeMo`_ devices. It uses gevent_
-for async I/O and requests_ for communication with the devices.
+for async I/O and requests_ for communication with the devices. It also
+provides a minimal command-line interface for discovery and switch toggling.
+
+.. contents::
+   :depth: 3
+
+Python API
+~~~~~~~~~~
 
 Environment
 -----------
@@ -66,7 +73,7 @@ returns a dictionary of return values::
 
 Switches
 --------
-Switches have two shortcut methods defined, ``on()`` and ``off()``.
+Switches have three shortcut methods defined: ``get_state``, ``on`` and ``off``.
 
 Motions
 -------
@@ -76,3 +83,19 @@ Motions currently don't have any shortcut methods defined.
 .. _gevent: http://www.gevent.org/
 .. _requests: http://docs.python-requests.org/en/latest/
 .. _Belkin WeMo: http://www.belkin.com/us/wemo
+
+
+Command Line
+~~~~~~~~~~~~
+The ``wemo`` script will discover devices in your environment and turn
+switches on and off. To list devices::
+
+    $ wemo list
+
+Default is to search for 5 seconds; you can pass ``--timeout`` to change that.
+
+To turn a switch on and off, you first have to know the name. Then::
+
+    $ wemo switch "TV Room" on
+    $ wemo switch "TV Room" off
+

@@ -3,11 +3,13 @@ import sys, os
 
 version = '0.1'
 
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
+    description = f.read()
+
 setup(name='ouimeaux',
       version=version,
       description="Python API to Belkin WeMo devices",
-      long_description="""\
-""",
+      long_description=description,
       classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='',
       author='Ian McCracken',
@@ -24,7 +26,9 @@ setup(name='ouimeaux',
           'gevent >= 1.0rc2',
           'requests'
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
+      entry_points={
+          'console_scripts': [
+              'wemo = ouimeaux.cli:wemo'
+          ]
+      },
       )
