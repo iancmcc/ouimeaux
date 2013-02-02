@@ -1,4 +1,3 @@
-
 from ouimeaux.device import Device
 
 
