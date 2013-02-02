@@ -10,11 +10,15 @@ setup(name='ouimeaux',
       version=version,
       description="Python API to Belkin WeMo devices",
       long_description=description,
-      classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-      keywords='',
+      classifiers=[
+          "License :: OSI Approved :: BSD License",
+          "Topic :: Home Automation",
+          "Programming Language :: Python"
+      ], 
+      keywords='belkin wemo soap api homeautomation control',
       author='Ian McCracken',
       author_email='ian.mccracken@gmail.com',
-      url='',
+      url='http://github.com/iancmcc/ouimeaux',
       license='BSD',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
