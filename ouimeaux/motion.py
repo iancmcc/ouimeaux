@@ -1,4 +1,6 @@
 from ouimeaux.device import Device
 
 class Motion(Device):
-    pass
+
+    def __repr__(self):
+        return '<WeMo Motion "{name}">'.format(name=self.name)

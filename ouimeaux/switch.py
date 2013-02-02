@@ -27,6 +27,6 @@ class Switch(Device):
         """
         return self.set_state(1)
 
-    def __str__(self):
+    def __repr__(self):
         return '<WeMo Switch "{name}">'.format(name=self.name)
 
