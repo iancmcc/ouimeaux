@@ -21,7 +21,9 @@ class Device(object):
         self.services = {}
         for svc in sl.service:
             svcname = svc.get_serviceType().split(':')[-2]
-            self.services[svcname] = Service(svc, base_url)
+            service = Service(svc, base_url)
+            self.services[svcname] = service
+            setattr(self, svcname, service)
 
     def get_service(self, name):
         try:
@@ -31,6 +33,14 @@ class Device(object):
 
     def list_services(self):
         return self.services.keys()
+
+    def explain(self):
+        for name, svc in self.services.iteritems():
+            print name
+            print '-'*len(name)
+            for aname, action in svc.actions.iteritems():
+                print "  %s(%s)" % (aname, ', '.join(action.args))
+            print
 
     @property
     def model(self):
