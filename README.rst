@@ -79,12 +79,6 @@ Motions
 -------
 Motions currently don't have any shortcut methods defined.
 
-
-.. _gevent: http://www.gevent.org/
-.. _requests: http://docs.python-requests.org/en/latest/
-.. _Belkin WeMo: http://www.belkin.com/us/wemo
-
-
 Command Line
 ~~~~~~~~~~~~
 The ``wemo`` script will discover devices in your environment and turn
@@ -99,3 +93,24 @@ To turn a switch on and off, you first have to know the name. Then::
     $ wemo switch "TV Room" on
     $ wemo switch "TV Room" off
 
+Installation
+~~~~~~~~~~~~
+
+Windows
+-------
+ouimeaux requires gevent version 1.0rc2 or higher. If you don't have the 
+ability to compile gevent and greenlet (a sub-dependency) locally, you can 
+find and download the binary installers for these packages here:
+
+- gevent: https://github.com/SiteSupport/gevent/downloads
+- greenlet: https://pypi.python.org/pypi/greenlet
+
+ouimeaux also requires use of UPnP to discover your WeMo devices. You might
+run into a port conflict since Windows has its own UPnP service that uses
+port 1900. You can work around this by disabling the "SSDP Discovery" service
+through the Control Panel.
+
+
+.. _gevent: http://www.gevent.org/
+.. _requests: http://docs.python-requests.org/en/latest/
+.. _Belkin WeMo: http://www.belkin.com/us/wemo
