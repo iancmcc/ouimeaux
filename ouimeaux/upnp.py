@@ -1,4 +1,6 @@
+import sys
 import logging
+import struct
 
 import gevent
 from gevent import socket
@@ -76,13 +78,17 @@ def test():
     upnp.server.set_spawn(1)
     upnp.server.start()
     log.debug("Started server, listening for responses")
-    with gevent.Timeout(10, KeyboardInterrupt) as timeout:
+    with gevent.Timeout(2, KeyboardInterrupt) as timeout:
         while True:
             try:
                 upnp.broadcast()
                 gevent.sleep(2)
             except KeyboardInterrupt:
                 break
+    try:
+        gevent.sleep(1000)
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import logging
+from urlparse import urlparse
 
 import requests
 
@@ -14,7 +15,9 @@ class UnknownService(Exception): pass
 
 class Device(object):
     def __init__(self, url):
+        self._state = None
         base_url = url.rsplit('/', 1)[0]
+        self.host = urlparse(url).hostname
         xml = requests.get(url)
         self._config = deviceParser.parseString(xml.content).device
         sl = self._config.serviceList
@@ -22,8 +25,20 @@ class Device(object):
         for svc in sl.service:
             svcname = svc.get_serviceType().split(':')[-2]
             service = Service(svc, base_url)
+            service.eventSubURL = base_url + svc.get_eventSubURL()
             self.services[svcname] = service
             setattr(self, svcname, service)
+
+    def _update_state(self, value):
+        self._state = int(value)
+
+    def get_state(self, force_update=False):
+        """
+        Returns 0 if off and 1 if on.
+        """
+        if force_update or self._state is None:
+            return int(self.basicevent.GetBinaryState()['BinaryState'])
+        return self._state
 
     def get_service(self, name):
         try:

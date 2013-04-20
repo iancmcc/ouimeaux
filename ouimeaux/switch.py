@@ -3,12 +3,6 @@ from ouimeaux.device import Device
 
 class Switch(Device):
 
-    def get_state(self):
-        """
-        Returns 0 if off and 1 if on.
-        """
-        return int(self.basicevent.GetBinaryState()['BinaryState'])
-
     def set_state(self, state):
         """
         Set the state of this device to on or off.
