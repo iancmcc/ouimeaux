@@ -11,28 +11,47 @@ from ouimeaux.upnp import UPnP
 _NOOP = lambda *x: None
 log = logging.getLogger(__name__)
 
+reqlog = logging.getLogger("requests")
+reqlog.disabled = True
 
-class StopBroadcasting(Exception): pass
+
+class StopBroadcasting(Exception):
+    pass
 
 
-class UnknownDevice(Exception): pass
+class UnknownDevice(Exception):
+    pass
 
 
 class Environment(object):
-    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP):
+    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, with_subscribers=True):
         self.upnp = UPnP(self._found_device)
-        self.subscribers = SubscriptionRegistry()
+        self.registry = SubscriptionRegistry()
+        self._with_subscribers = with_subscribers
         self._switch_callback = switch_callback
         self._motion_callback = motion_callback
-        self.switches = {}
-        self.motions = {}
+        self._switches = {}
+        self._motions = {}
 
-    def discover(self, seconds=2):
-        log.info("Starting server to listen for responses")
-        log.info("Beginning discovery of devices")
+    def start(self):
+        # Start the server to listen to new devices
         self.upnp.server.set_spawn(2)
         self.upnp.server.start()
-        subscribers = gevent.spawn(self.subscribers.server.serve_forever)
+
+        if self._with_subscribers:
+            # Start the server to listen to events
+            self.registry.server.set_spawn(2)
+            self.registry.server.start()
+
+    def wait(self):
+        try:
+            while True:
+                gevent.sleep(1000)
+        except (KeyboardInterrupt, SystemExit, Exception):
+            pass
+
+    def discover(self, seconds=2):
+        log.info("Discovering devices")
         with gevent.Timeout(seconds, StopBroadcasting) as timeout:
             try:
                 try:
@@ -42,45 +61,44 @@ class Environment(object):
                 except Exception as e:
                     raise StopBroadcasting(e)
             except StopBroadcasting:
-                self.upnp.server.stop()
-                try:
-                    subscribers.join()
-                except KeyboardInterrupt:
-                    return
-
+                return
 
     def _found_device(self, address, headers):
+        log.info("Found device at %s" % (address,))
         usn = headers['usn']
         if usn.startswith('uuid:Socket'):
-            switch = Switch(headers['location'])
-            self.subscribers.register(switch)
-            self.switches[switch.name] = switch
-            self.subscribers.on(switch, 'BinaryState',
-                                switch._update_state)
-            self._switch_callback(switch)
+            klass = Switch
+            callback = self._switch_callback
+            registry = self._switches
         elif usn.startswith('uuid:Sensor'):
-            motion = Motion(headers['location'])
-            self.subscribers.register(motion)
-            self.subscribers.on(motion, 'BinaryState',
-                                motion._update_state)
-            self.motions[motion.name] = motion
-            self._motion_callback(motion)
+            klass = Motion
+            callback = self._motion_callback
+            registry = self._motions
+        else:
+            return
+        device = klass(headers['location'])
+        registry[device.name] = device
+        if self._with_subscribers:
+            self.registry.register(device)
+            self.registry.on(device, 'BinaryState',
+                             device._update_state)
+        callback(device)
 
     def list_switches(self):
-        return self.switches.keys()
+        return self._switches.keys()
 
     def list_motions(self):
-        return self.motions.keys()
+        return self._motions.keys()
 
     def get_switch(self, name):
         try:
-            return self.switches[name]
+            return self._switches[name]
         except KeyError:
             raise UnknownDevice(name)
 
     def get_motion(self, name):
         try:
-            return self.motions[name]
+            return self._motions[name]
         except KeyError:
             raise UnknownDevice(name)
 

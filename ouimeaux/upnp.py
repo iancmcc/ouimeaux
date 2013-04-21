@@ -1,6 +1,4 @@
-import sys
 import logging
-import struct
 
 import gevent
 from gevent import socket
@@ -48,7 +46,7 @@ class UPnP(object):
         server = getattr(self, "_server", None)
         if server is None:
             server = DatagramServer("{ip}:{port}".format(**self.__dict__),
-                self._response_received)
+                                    self._response_received)
             self._server = server
         return server
 

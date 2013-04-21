@@ -52,7 +52,7 @@ class Device(object):
     def explain(self):
         for name, svc in self.services.iteritems():
             print name
-            print '-'*len(name)
+            print '-' * len(name)
             for aname, action in svc.actions.iteritems():
                 print "  %s(%s)" % (aname, ', '.join(action.args))
             print

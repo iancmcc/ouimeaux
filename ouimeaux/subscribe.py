@@ -1,12 +1,12 @@
 from collections import defaultdict
 import logging
 from xml.etree import cElementTree
+from functools import partial
 
 import requests
 import gevent
 from gevent import socket
 from gevent.wsgi import WSGIServer
-
 
 
 log = logging.getLogger(__name__)
@@ -15,13 +15,14 @@ NS = "{urn:schemas-upnp-org:event-1-0}"
 
 
 class SubscriptionRegistry(object):
-
     def __init__(self):
         self._devices = {}
         self._callbacks = defaultdict(list)
 
     def register(self, device):
         log.info("Subscribing to basic events from %r", (device,))
+        # Provide a function to register a callback when the device changes state
+        device.register_listener = partial(self.on, device, 'BinaryState')
         self._devices[device.host] = device
         self._resubscribe(device.basicevent.eventSubURL)
 
@@ -42,7 +43,6 @@ class SubscriptionRegistry(object):
         timeout = int(response.headers['timeout'].replace('Second-', ''))
         sid = response.headers['sid']
         gevent.spawn_later(timeout, self._resubscribe, url, sid)
-
 
     def _handle(self, environ, start_response):
         device = self._devices[environ['REMOTE_ADDR']]
