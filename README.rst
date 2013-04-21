@@ -84,7 +84,7 @@ when switches and motions change state (on/off, or motion detected)::
     >>> env.get_motion('Front Hallway').register_listeners(on_motion)
     >>> env.wait()
 
-Note the use of ```Environment.wait()`` to give control to the event loop for
+Note the use of ``Environment.wait()`` to give control to the event loop for
 events to be detected.
 
 Switches
