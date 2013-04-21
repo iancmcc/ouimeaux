@@ -39,7 +39,7 @@ class Action(object):
 
     def __call__(self, **kwargs):
         arglist = '\n'.join('<{0}>{1}</{0}>'.format(arg, value)
-            for arg, value in kwargs.iteritems())
+                            for arg, value in kwargs.iteritems())
         body = REQUEST_TEMPLATE.format(
             action=self.name,
             service=self.serviceType,

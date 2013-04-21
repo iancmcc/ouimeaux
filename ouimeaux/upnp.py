@@ -46,7 +46,7 @@ class UPnP(object):
         server = getattr(self, "_server", None)
         if server is None:
             server = DatagramServer("{ip}:{port}".format(**self.__dict__),
-                self._response_received)
+                                    self._response_received)
             self._server = server
         return server
 
@@ -76,13 +76,17 @@ def test():
     upnp.server.set_spawn(1)
     upnp.server.start()
     log.debug("Started server, listening for responses")
-    with gevent.Timeout(10, KeyboardInterrupt) as timeout:
+    with gevent.Timeout(2, KeyboardInterrupt) as timeout:
         while True:
             try:
                 upnp.broadcast()
                 gevent.sleep(2)
             except KeyboardInterrupt:
                 break
+    try:
+        gevent.sleep(1000)
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":
