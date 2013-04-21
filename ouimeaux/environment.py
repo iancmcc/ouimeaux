@@ -24,7 +24,21 @@ class UnknownDevice(Exception):
 
 
 class Environment(object):
-    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, with_subscribers=True):
+    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP,
+                 with_subscribers=True):
+        """
+        Create a WeMo environment.
+
+        @param switch_callback: A function to be called when a new switch is
+                                discovered.
+        @type switch_callback:  function
+        @param motion_callback: A function to be called when a new motion is
+                                discovered.
+        @type motion_callback:  function
+        @param with_subscribers: Whether to register for events with discovered
+                                devices.
+        @type with_subscribers: bool
+        """
         self.upnp = UPnP(self._found_device)
         self.registry = SubscriptionRegistry()
         self._with_subscribers = with_subscribers
@@ -34,6 +48,9 @@ class Environment(object):
         self._motions = {}
 
     def start(self):
+        """
+        Start the server(s) necessary to receive information from devices.
+        """
         # Start the server to listen to new devices
         self.upnp.server.set_spawn(2)
         self.upnp.server.start()
@@ -44,6 +61,9 @@ class Environment(object):
             self.registry.server.start()
 
     def wait(self):
+        """
+        Wait for events.
+        """
         try:
             while True:
                 gevent.sleep(1000)
@@ -51,6 +71,12 @@ class Environment(object):
             pass
 
     def discover(self, seconds=2):
+        """
+        Discover devices in the environment.
+
+        @param seconds: Number of seconds to broadcast requests.
+        @type seconds: int
+        """
         log.info("Discovering devices")
         with gevent.Timeout(seconds, StopBroadcasting) as timeout:
             try:
@@ -85,18 +111,30 @@ class Environment(object):
         callback(device)
 
     def list_switches(self):
+        """
+        List switches discovered in the environment.
+        """
         return self._switches.keys()
 
     def list_motions(self):
+        """
+        List motions discovered in the environment.
+        """
         return self._motions.keys()
 
     def get_switch(self, name):
+        """
+        Get a switch by name.
+        """
         try:
             return self._switches[name]
         except KeyError:
             raise UnknownDevice(name)
 
     def get_motion(self, name):
+        """
+        Get a motion by name.
+        """
         try:
             return self._motions[name]
         except KeyError:

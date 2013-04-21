@@ -71,13 +71,29 @@ returns a dictionary of return values::
     >>> switch.basicevent.SetBinaryState(BinaryState=0)
     {'BinaryState': 0}
 
+Events
+------
+By default, ouimeaux subscribes to property change events on discovered
+devices (this can be disabled by passing ``with_subscribers=False`` to the
+``Environment`` constructor). You can register callbacks that will be called
+when switches and motions change state (on/off, or motion detected)::
+
+    >>> def on_motion(value):
+    ...     print "Motion detected!"
+    ...
+    >>> env.get_motion('Front Hallway').register_listeners(on_motion)
+    >>> env.wait()
+
+Note the use of ```Environment.wait()`` to give control to the event loop for
+events to be detected.
+
 Switches
 --------
 Switches have three shortcut methods defined: ``get_state``, ``on`` and ``off``.
 
 Motions
 -------
-Motions currently don't have any shortcut methods defined.
+Motions have one shortcut method defined: ``get_state``.
 
 Command Line
 ~~~~~~~~~~~~
@@ -109,6 +125,19 @@ ouimeaux also requires use of UPnP to discover your WeMo devices. You might
 run into a port conflict since Windows has its own UPnP service that uses
 port 1900. You can work around this by disabling the "SSDP Discovery" service
 through the Control Panel.
+
+Changelog
+~~~~~~~~~
+
+Release 0.2 (April 21, 2013)
+------------------------------
+- Fixed #1: Added ability to subscribe to motion and switch state change events.
+- Added Windows installation details to README (patch by brianpeiris)
+- Cleaned up UDP server lifecycle so rediscovery doesn't try to start it back up.
+
+Release 0.1 (February 2, 2013)
+------------------------------
+- Initial release.
 
 
 .. _gevent: http://www.gevent.org/
