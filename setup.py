@@ -24,7 +24,7 @@ setup(name='ouimeaux',
       include_package_data=True,
       zip_safe=False,
       dependency_links = [
-          'https://github.com/downloads/SiteSupport/gevent/gevent-1.0rc2.tar.gz#egg=gevent-1.0.rc2'
+          'https://github.com/downloads/surfly/gevent/gevent-1.0rc2.tar.gz#egg=gevent-1.0.rc2'
       ],
       install_requires=[
           'gevent >= 1.0rc2',
