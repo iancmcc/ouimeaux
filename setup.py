@@ -28,7 +28,8 @@ setup(name='ouimeaux',
       ],
       install_requires=[
           'gevent >= 1.0rc2',
-          'requests'
+          'requests',
+          'pyyaml'
       ],
       entry_points={
           'console_scripts': [

@@ -95,6 +95,34 @@ Motions
 -------
 Motions have one shortcut method defined: ``get_state``.
 
+Device Cache
+------------
+By default, device results are cached on the filesystem for quicker
+initialization. This can be disabled by passing ``with_cache=False`` to the
+``Environment`` constructor. On a related note, if you want to use the cache
+exclusively, you can pass ``with_discovery=False`` to the ``Environment``
+constructor to disable M-SEARCH requests.
+
+Configuration
+-------------
+A configuration file in YAML format will be created at ~/.wemo/config.yml::
+
+    # ip:port to bind to when receiving responses from discovery.
+    # The default is first DNS resolution of local host, port 54321
+    #
+    # bind: 10.1.2.3:9090
+
+    # Whether to use a device cache (stored at ~/.wemo/cache)
+    #
+    # cache: false
+
+    aliases:
+    # Shortcuts to longer device names. Uncommenting the following
+    # line will allow you to execute 'wemo switch lr on' instead of
+    # 'wemo switch "Living Room Lights" on'
+    #
+    #    lr: Living Room Lights
+
 Command Line
 ~~~~~~~~~~~~
 The ``wemo`` script will discover devices in your environment and turn
@@ -109,6 +137,23 @@ To turn a switch on and off, you first have to know the name. Then::
     $ wemo switch "TV Room" on
     $ wemo switch "TV Room" off
 
+Or, you can toggle the device::
+
+    $ wemo switch "TV Room" toggle
+
+The ``wemo`` script will obey configured settings; they can also be overridden
+on the command line:
+
+    --no-cache : Disable the device cache
+    --bind IP:PORT : Bind to this host and port when listening for responses
+
+Aliases configured in the file will be accessible on the command line as well::
+
+    aliases:
+        tv: TV Room Lights
+
+    $ wemo switch tv on
+
 Installation
 ~~~~~~~~~~~~
 
@@ -121,13 +166,19 @@ find and download the binary installers for these packages here:
 - gevent: https://github.com/SiteSupport/gevent/downloads
 - greenlet: https://pypi.python.org/pypi/greenlet
 
-ouimeaux also requires use of UPnP to discover your WeMo devices. You might
-run into a port conflict since Windows has its own UPnP service that uses
-port 1900. You can work around this by disabling the "SSDP Discovery" service
-through the Control Panel.
 
 Changelog
 ~~~~~~~~~
+
+Release 0.3 (May 25, 2013)
+--------------------------
+- Fixed #4: Added ability to specify ip:port for discovery server binding. Removed
+  documentation describing need to disable SSDP service on Windows.
+- Fixed #5: Added device cache for faster results.
+- Added configuration file.
+- Added ability to configure aliases for devices to avoid quoting strings on
+  the command line.
+- Added 'toggle' command to command line switch control.
 
 Release 0.2 (April 21, 2013)
 ------------------------------
