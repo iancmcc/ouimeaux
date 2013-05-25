@@ -37,7 +37,7 @@ class UPnP(object):
                     headers[header.lower()] = value.strip()
                 except ValueError:
                     continue
-            if headers.get('x-user-agent', None) == 'redsonic':
+            if (headers.get('x-user-agent', None) == 'redsonic'):
                 log.info("Found WeMo at {0}:{1}".format(*address))
                 self.clients[address[0]] = headers
                 gevent.spawn(self._handler, address, headers)
@@ -60,11 +60,11 @@ class UPnP(object):
         """
         log.debug("Broadcasting M-SEARCH to %s:%s", self.mcast_ip, self.mcast_port)
         request = '\r\n'.join(("M-SEARCH * HTTP/1.1",
-                               "HOST:{bind}",
+                               "HOST:{mcast_ip}:{mcast_port}",
                                "ST:upnp:rootdevice",
                                "MX:2",
                                'MAN:"ssdp:discover"',
-                               "", "")).format(bind=self.bind)
+                               "", "")).format(**self.__dict__)
         self.server.sendto(request, (self.mcast_ip, self.mcast_port))
 
 
@@ -75,7 +75,7 @@ def test():
         print "I GOT ONE"
         print address, headers
 
-    upnp = UPnP(handler, bind='10.42.1.120:54321')
+    upnp = UPnP(handler)
     upnp.server.set_spawn(1)
     upnp.server.start()
     log.debug("Started server, listening for responses")
