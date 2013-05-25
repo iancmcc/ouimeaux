@@ -14,10 +14,14 @@ class UPnP(object):
     user-provided handler with the results.
     """
 
-    def __init__(self, handler, mcast_ip="239.255.255.250", port=1900):
-        self.ip = socket.gethostbyname(socket.gethostname())
+    def __init__(self, handler, mcast_ip='239.255.255.250', mcast_port=1900, bind=None):
+        if bind is None:
+            host = socket.gethostbyname(socket.gethostname())
+            port = 54321
+            bind = '{0}:{1}'.format(host, port)
+        self.bind = bind
         self.mcast_ip = mcast_ip
-        self.port = port
+        self.mcast_port = mcast_port
         self.clients = {}
         self._handler = handler
 
@@ -33,7 +37,7 @@ class UPnP(object):
                     headers[header.lower()] = value.strip()
                 except ValueError:
                     continue
-            if (headers.get('x-user-agent', None) == 'redsonic'):
+            if headers.get('x-user-agent', None) == 'redsonic':
                 log.info("Found WeMo at {0}:{1}".format(*address))
                 self.clients[address[0]] = headers
                 gevent.spawn(self._handler, address, headers)
@@ -45,8 +49,7 @@ class UPnP(object):
         """
         server = getattr(self, "_server", None)
         if server is None:
-            server = DatagramServer("{ip}:{port}".format(**self.__dict__),
-                                    self._response_received)
+            server = DatagramServer(self.bind, self._response_received)
             self._server = server
         return server
 
@@ -54,15 +57,14 @@ class UPnP(object):
         """
         Send a multicast M-SEARCH request asking for devices to report in.
         """
-        log.debug("Broadcasting M-SEARCH to %s:%s", self.mcast_ip, self.port)
+        log.debug("Broadcasting M-SEARCH to %s:%s", self.mcast_ip, self.mcast_port)
         request = '\r\n'.join(("M-SEARCH * HTTP/1.1",
-                               "HOST:{ip}:{port}",
+                               "HOST:{bind}",
                                "ST:upnp:rootdevice",
                                "MX:2",
                                'MAN:"ssdp:discover"',
-                               "", "")).format(
-            ip=self.mcast_ip, port=self.port)
-        self.server.sendto(request, (self.mcast_ip, self.port))
+                               "", "")).format(bind=self.bind)
+        self.server.sendto(request, (self.mcast_ip, self.mcast_port))
 
 
 def test():
@@ -72,21 +74,17 @@ def test():
         print "I GOT ONE"
         print address, headers
 
-    upnp = UPnP(handler)
+    upnp = UPnP(handler, bind='10.42.1.120:54321')
     upnp.server.set_spawn(1)
     upnp.server.start()
     log.debug("Started server, listening for responses")
-    with gevent.Timeout(2, KeyboardInterrupt) as timeout:
+    with gevent.Timeout(2, KeyboardInterrupt):
         while True:
             try:
                 upnp.broadcast()
                 gevent.sleep(2)
             except KeyboardInterrupt:
                 break
-    try:
-        gevent.sleep(1000)
-    except KeyboardInterrupt:
-        pass
 
 
 if __name__ == "__main__":
