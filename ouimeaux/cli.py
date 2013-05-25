@@ -2,6 +2,7 @@ import sys
 from argparse import ArgumentParser
 
 from .environment import Environment
+from ouimeaux.config import get_cache
 
 
 def wemo():
@@ -61,6 +62,9 @@ def wemo():
         if getattr(args, 'device', None):
             args.device = env._config.aliases.get(args.device, args.device)
         env.start()
+        with get_cache() as c:
+            if c.empty:
+                args.use_cache = False
         if (args.use_cache is not None and not args.use_cache) or (
                     env._config.cache is not None and not env._config.cache):
             env.discover(args.timeout)

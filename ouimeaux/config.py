@@ -53,7 +53,7 @@ aliases:
 
     @property
     def aliases(self):
-        return self._parsed.get('aliases', {})
+        return self._parsed.get('aliases') or {}
 
     @property
     def bind(self):
@@ -67,6 +67,10 @@ aliases:
 class Cache(object):
     def __init__(self, shelf):
         self._shelf = shelf
+
+    @property
+    def empty(self):
+        return not self._shelf.get('devices')
 
     def add_device(self, device):
         assert isinstance(device, Device)
