@@ -29,6 +29,25 @@ class WemoConfiguration(object):
         if filename is None:
             ensure_directory(in_home('.wemo'))
             filename = in_home('.wemo', 'config.yml')
+        if not os.path.isfile(filename):
+            with open(filename, 'w') as f:
+                f.write("""
+aliases:
+# Shortcuts to longer device names. Uncommenting the following
+# line will allow you to execute 'wemo switch lr on' instead of
+# 'wemo switch "Living Room Lights" on'
+#
+#    lr: Living Room Lights
+
+# ip:port to bind to when receiving responses from discovery.
+# The default is first DNS resolution of local host, port 54321
+#
+# bind: 10.1.2.3:9090
+
+# Whether to use a device cache (stored at ~/.wemo/cache)
+#
+# cache: true
+""")
         with open(filename, 'r') as cfg:
             self._parsed = yaml.load(cfg)
 
@@ -40,6 +59,10 @@ class WemoConfiguration(object):
     def bind(self):
         return self._parsed.get('bind', None)
 
+    @property
+    def cache(self):
+        return self._parsed.get('cache', None)
+
 
 class Cache(object):
     def __init__(self, shelf):
@@ -47,7 +70,6 @@ class Cache(object):
 
     def add_device(self, device):
         assert isinstance(device, Device)
-        print "Adding device"
         d = self._shelf.setdefault('devices', {})
         d[device.name] = device
 

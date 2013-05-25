@@ -12,14 +12,14 @@ def wemo():
     parser.add_argument("--bind", default=None,
                         help="ip:port to which to bind the response server."
                              " Default is localhost:54321")
-    parser.add_argument("--no-cache", dest="use_cache", default=True,
+    parser.add_argument("--no-cache", dest="use_cache", default=None,
                         action="store_false",
                         help="Disable the device cache")
     subparsers = parser.add_subparsers()
 
     stateparser = subparsers.add_parser("switch",
                                         help="Turn a WeMo Switch on or off")
-    stateparser.add_argument("device", help="Name of the device")
+    stateparser.add_argument("device", help="Name or alias of the device")
     stateparser.add_argument("state", help="'on' or 'off")
 
     subparsers.add_parser("list",
@@ -58,8 +58,12 @@ def wemo():
     try:
         env = Environment(on_switch, on_motion, with_subscribers=False,
                           bind=args.bind, with_cache=args.use_cache)
+        if getattr(args, 'device', None):
+            args.device = env._config.aliases.get(args.device, args.device)
         env.start()
-        env.discover(args.timeout)
+        if (args.use_cache is not None and not args.use_cache) or (
+                    env._config.cache is not None and not env._config.cache):
+            env.discover(args.timeout)
     except KeyboardInterrupt:
         sys.exit(0)
 

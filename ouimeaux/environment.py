@@ -1,7 +1,7 @@
 import logging
 
 import gevent
-from ouimeaux.config import get_cache
+from ouimeaux.config import get_cache, WemoConfiguration
 
 from ouimeaux.motion import Motion
 from ouimeaux.subscribe import SubscriptionRegistry
@@ -26,8 +26,8 @@ class UnknownDevice(Exception):
 
 class Environment(object):
     def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP,
-                 with_discovery=True, with_subscribers=True, with_cache=True,
-                 bind=None):
+                 with_discovery=True, with_subscribers=True, with_cache=None,
+                 bind=None, config_filename=None):
         """
         Create a WeMo environment.
 
@@ -43,8 +43,11 @@ class Environment(object):
         @param bind: ip:port to which to bind the response server.
         @type bind: str
         """
-        self.upnp = UPnP(self._found_device, bind=bind)
+        self._config = WemoConfiguration(filename=config_filename)
+        self.upnp = UPnP(self._found_device, bind=bind or self._config.bind)
         self.registry = SubscriptionRegistry()
+        if with_cache is None:
+            with_cache = (self._config.cache if self._config.cache is not None else True)
         self._with_cache = with_cache
         self._with_discovery = with_discovery
         self._with_subscribers = with_subscribers
