@@ -49,6 +49,7 @@ class UPnP(object):
         """
         server = getattr(self, "_server", None)
         if server is None:
+            log.debug("Binding datagram server to %s", self.bind)
             server = DatagramServer(self.bind, self._response_received)
             self._server = server
         return server

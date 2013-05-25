@@ -9,6 +9,9 @@ def wemo():
 
     parser.add_argument("--timeout", type=int, default=5,
                         help="Time in seconds to allow for discovery")
+    parser.add_argument("--bind", default=None,
+                        help="ip:port to which to bind the response server."
+                             " Default is localhost:54321")
     subparsers = parser.add_subparsers()
 
     stateparser = subparsers.add_parser("switch",
@@ -44,7 +47,8 @@ def wemo():
             print "Motion: ", motion.name
 
     try:
-        env = Environment(on_switch, on_motion, with_subscribers=False)
+        env = Environment(on_switch, on_motion, with_subscribers=False,
+                          bind=args.bind)
         env.start()
         env.discover(args.timeout)
     except KeyboardInterrupt:

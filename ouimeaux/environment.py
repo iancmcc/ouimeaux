@@ -25,7 +25,7 @@ class UnknownDevice(Exception):
 
 class Environment(object):
     def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP,
-                 with_subscribers=True):
+                 with_subscribers=True, bind=None):
         """
         Create a WeMo environment.
 
@@ -38,8 +38,10 @@ class Environment(object):
         @param with_subscribers: Whether to register for events with discovered
                                 devices.
         @type with_subscribers: bool
+        @param bind: ip:port to which to bind the response server.
+        @type bind: str
         """
-        self.upnp = UPnP(self._found_device)
+        self.upnp = UPnP(self._found_device, bind=bind)
         self.registry = SubscriptionRegistry()
         self._with_subscribers = with_subscribers
         self._switch_callback = switch_callback
