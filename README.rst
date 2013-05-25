@@ -144,8 +144,11 @@ Or, you can toggle the device::
 The ``wemo`` script will obey configured settings; they can also be overridden
 on the command line:
 
-    --no-cache : Disable the device cache
-    --bind IP:PORT : Bind to this host and port when listening for responses
+--no-cache
+    Disable the device cache
+
+--bind IP:PORT
+    Bind to this host and port when listening for responses
 
 Aliases configured in the file will be accessible on the command line as well::
 
