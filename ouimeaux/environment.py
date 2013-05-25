@@ -1,6 +1,7 @@
 import logging
 
 import gevent
+from ouimeaux.config import get_cache
 
 from ouimeaux.motion import Motion
 from ouimeaux.subscribe import SubscriptionRegistry
@@ -25,7 +26,8 @@ class UnknownDevice(Exception):
 
 class Environment(object):
     def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP,
-                 with_subscribers=True, bind=None):
+                 with_discovery=True, with_subscribers=True, with_cache=True,
+                 bind=None):
         """
         Create a WeMo environment.
 
@@ -43,6 +45,8 @@ class Environment(object):
         """
         self.upnp = UPnP(self._found_device, bind=bind)
         self.registry = SubscriptionRegistry()
+        self._with_cache = with_cache
+        self._with_discovery = with_discovery
         self._with_subscribers = with_subscribers
         self._switch_callback = switch_callback
         self._motion_callback = motion_callback
@@ -53,9 +57,15 @@ class Environment(object):
         """
         Start the server(s) necessary to receive information from devices.
         """
-        # Start the server to listen to new devices
-        self.upnp.server.set_spawn(2)
-        self.upnp.server.start()
+        if self._with_cache:
+            with get_cache() as c:
+                for dev in c.devices:
+                    self._process_device(dev, cache=False)
+
+        if self._with_discovery:
+            # Start the server to listen to new devices
+            self.upnp.server.set_spawn(2)
+            self.upnp.server.start()
 
         if self._with_subscribers:
             # Start the server to listen to events
@@ -96,20 +106,30 @@ class Environment(object):
         usn = headers['usn']
         if usn.startswith('uuid:Socket'):
             klass = Switch
-            callback = self._switch_callback
-            registry = self._switches
         elif usn.startswith('uuid:Sensor'):
             klass = Motion
+        else:
+            return
+        device = klass(headers['location'])
+        self._process_device(device)
+
+    def _process_device(self, device, cache=None):
+        if isinstance(device, Switch):
+            callback = self._switch_callback
+            registry = self._switches
+        elif isinstance(device, Motion):
             callback = self._motion_callback
             registry = self._motions
         else:
             return
-        device = klass(headers['location'])
         registry[device.name] = device
         if self._with_subscribers:
             self.registry.register(device)
             self.registry.on(device, 'BinaryState',
                              device._update_state)
+        if cache if cache is not None else self._with_cache:
+            with get_cache() as c:
+                c.add_device(device)
         callback(device)
 
     def list_switches(self):

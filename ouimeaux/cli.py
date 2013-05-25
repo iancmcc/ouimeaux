@@ -12,6 +12,9 @@ def wemo():
     parser.add_argument("--bind", default=None,
                         help="ip:port to which to bind the response server."
                              " Default is localhost:54321")
+    parser.add_argument("--no-cache", dest="use_cache", default=True,
+                        action="store_false",
+                        help="Disable the device cache")
     subparsers = parser.add_subparsers()
 
     stateparser = subparsers.add_parser("switch",
@@ -31,13 +34,19 @@ def wemo():
             state = "on"
         elif args.state.lower() in ("off", "0", "false"):
             state = "off"
+        elif args.state.lower() == "toggle":
+            state = "toggle"
     else:
         ls = True
 
     def on_switch(switch):
         if state:
             if switch.name == args.device:
-                getattr(switch, state)()
+                if state == "toggle":
+                    found_state = switch.get_state(force_update=True)
+                    switch.set_state(not found_state)
+                else:
+                    getattr(switch, state)()
                 sys.exit(0)
         elif ls:
             print "Switch: ", switch.name
@@ -48,7 +57,7 @@ def wemo():
 
     try:
         env = Environment(on_switch, on_motion, with_subscribers=False,
-                          bind=args.bind)
+                          bind=args.bind, with_cache=args.use_cache)
         env.start()
         env.discover(args.timeout)
     except KeyboardInterrupt:
