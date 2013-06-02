@@ -27,6 +27,10 @@ functions called when a Switch or Motion device is identified::
     ...
     >>> env = Environment(on_switch, on_motion)
 
+Start up the server to listen for responses to the discovery broadcast::
+
+    >>> env.start()
+
 Discovery of all WeMo devices in an environment is then straightforward; simply
 pass the length of time (in seconds) you want discovery to run::
 
