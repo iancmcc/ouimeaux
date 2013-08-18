@@ -1,12 +1,13 @@
+import os
 import sys
-from argparse import ArgumentParser
+import argparse
 
 from .environment import Environment
-from ouimeaux.config import get_cache
+from ouimeaux.config import get_cache, in_home
 
 
 def wemo():
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
 
     parser.add_argument("--timeout", type=int, default=5,
                         help="Time in seconds to allow for discovery")
@@ -17,6 +18,12 @@ def wemo():
                         action="store_false",
                         help="Disable the device cache")
     subparsers = parser.add_subparsers()
+
+    clearparser = subparsers.add_parser(
+        "clear", help="Clear the device cache")
+    # Add a hidden argument so we can detect when we're in this command
+    clearparser.add_argument('--clearcache', default="1", 
+                             help=argparse.SUPPRESS)
 
     stateparser = subparsers.add_parser("switch",
                                         help="Turn a WeMo Switch on or off")
@@ -29,6 +36,17 @@ def wemo():
     args = parser.parse_args()
 
     ls = state = None
+
+    if getattr(args, 'clearcache', None):
+        for fname in 'cache', 'cache.db':
+            filename = in_home('.wemo', fname)
+            try:
+                os.remove(filename)
+            except OSError:
+                # File didn't exist; cache must be clear
+                pass
+        print "Device cache cleared."
+        return
 
     if getattr(args, 'device', None):
         if args.state.lower() in ("on", "1", "true"):
