@@ -6,6 +6,8 @@ ouimeaux is a Python interface to `Belkin WeMo`_ devices. It uses gevent_
 for async I/O and requests_ for communication with the devices. It also
 provides a minimal command-line interface for discovery and switch toggling.
 
+Currently supported devices include Motions, Switches and Light Switches.
+
 .. contents::
    :depth: 3
 
