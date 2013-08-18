@@ -109,8 +109,8 @@ initialization. This can be disabled by passing ``with_cache=False`` to the
 exclusively, you can pass ``with_discovery=False`` to the ``Environment``
 constructor to disable M-SEARCH requests.
 
-You can clear the device cache either by deleting the file `~/.wemo/cache` or
-by using the `wemo clear` command.
+You can clear the device cache either by deleting the file ``~/.wemo/cache`` 
+or by using the ``wemo clear`` command.
 
 Configuration
 -------------
