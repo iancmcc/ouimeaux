@@ -109,9 +109,12 @@ class Environment(object):
         usn = headers['usn']
         if usn.startswith('uuid:Socket'):
             klass = Switch
+        elif usn.startswith('uuid:Lightswitch'):
+            klass = Switch
         elif usn.startswith('uuid:Sensor'):
             klass = Motion
         else:
+            log.info("Unrecognized device type. USN={0}.format(usn))
             return
         device = klass(headers['location'])
         self._process_device(device)
