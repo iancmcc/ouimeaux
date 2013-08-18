@@ -114,7 +114,7 @@ class Environment(object):
         elif usn.startswith('uuid:Sensor'):
             klass = Motion
         else:
-            log.info("Unrecognized device type. USN={0}.format(usn))
+            log.info("Unrecognized device type. USN={0}".format(usn))
             return
         device = klass(headers['location'])
         self._process_device(device)
