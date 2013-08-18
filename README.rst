@@ -109,6 +109,9 @@ initialization. This can be disabled by passing ``with_cache=False`` to the
 exclusively, you can pass ``with_discovery=False`` to the ``Environment``
 constructor to disable M-SEARCH requests.
 
+You can clear the device cache either by deleting the file `~/.wemo/cache` or
+by using the `wemo clear` command.
+
 Configuration
 -------------
 A configuration file in YAML format will be created at ~/.wemo/config.yml::
@@ -147,6 +150,10 @@ Or, you can toggle the device::
 
     $ wemo switch "TV Room" toggle
 
+You can also clear the device cache::
+    
+    $ wemo clear
+
 The ``wemo`` script will obey configured settings; they can also be overridden
 on the command line:
 
@@ -178,6 +185,11 @@ find and download the binary installers for these packages here:
 
 Changelog
 ~~~~~~~~~
+
+Release 0.4 (August 17, 2013)
+-----------------------------
+- Fixed #7: Added support for light switch devices (patch by nschrenk).
+- Fixed #6: Added "wemo clear" command to clear the device cache.
 
 Release 0.3 (May 25, 2013)
 --------------------------
