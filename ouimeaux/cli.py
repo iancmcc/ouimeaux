@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 import argparse
 
 from .environment import Environment
@@ -17,6 +18,8 @@ def wemo():
     parser.add_argument("--no-cache", dest="use_cache", default=None,
                         action="store_false",
                         help="Disable the device cache")
+    parser.add_argument("--debug", action="store_true", default=False,
+                        help="Enable debug logging")
     subparsers = parser.add_subparsers()
 
     clearparser = subparsers.add_parser(
@@ -36,6 +39,9 @@ def wemo():
     args = parser.parse_args()
 
     ls = state = None
+
+    if getattr(args, 'debug', False):
+        logging.basicConfig(level=logging.DEBUG)
 
     if getattr(args, 'clearcache', None):
         for fname in 'cache', 'cache.db':
