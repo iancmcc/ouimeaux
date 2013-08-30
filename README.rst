@@ -182,6 +182,21 @@ find and download the binary installers for these packages here:
 - gevent: https://github.com/SiteSupport/gevent/downloads
 - greenlet: https://pypi.python.org/pypi/greenlet
 
+Debian/Ubuntu
+-------------
+The ouimeaux setup.py script uses python's easy_install, and the python
+header files.  You can use apt-get to install these.
+
+    sudo apt-get install python-setuptools python-dev
+
+Once these are installed, you should be able to easily build and install.
+
+    sudo python setup.py install
+
+You will likely need to explicitly set the --bind port to the wemo script.
+Use `ifconfig` to determine your IP address, then launch with, e.g.
+
+    wemo --bind 10.0.1.6:54321 list
 
 Changelog
 ~~~~~~~~~
