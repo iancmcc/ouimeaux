@@ -10,6 +10,12 @@ from .utils import get_ip_address
 log = logging.getLogger(__name__)
 
 
+class UPnPLoopbackException(Exception):
+    """
+    Using loopback interface as callback IP.
+    """
+
+
 class UPnP(object):
     """
     Makes M-SEARCH requests, filters out non-WeMo responses, and calls a
@@ -19,6 +25,9 @@ class UPnP(object):
     def __init__(self, handler, mcast_ip='239.255.255.250', mcast_port=1900, bind=None):
         if bind is None:
             host = get_ip_address()
+            if host.startswith('127.'):
+                raise UPnPLoopbackException("Using %s as a callback IP for "
+                                            "discovery will not be successful.")
             port = 54321
             bind = '{0}:{1}'.format(host, port)
         self.bind = bind

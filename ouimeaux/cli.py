@@ -3,6 +3,7 @@ import sys
 import logging
 import argparse
 
+from .upnp import UPnPLoopbackException
 from .environment import Environment
 from ouimeaux.config import get_cache, in_home
 
@@ -94,6 +95,13 @@ def wemo():
             env.discover(args.timeout)
     except KeyboardInterrupt:
         sys.exit(0)
+    except UPnPLoopbackException:
+        print """
+Loopback interface is being used! You will probably not receive any responses 
+from devices.  Use ifconfig to find your IP address, then either pass the 
+--bind argument or edit ~/.wemo/config.yml to specify the IP to which devices 
+should call back during discovery.""".strip()
+        sys.exit(1)
 
     if not ls:
         print "No device found with that name."

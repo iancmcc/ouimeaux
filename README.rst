@@ -195,11 +195,6 @@ execute::
 
     sudo python setup.py install
 
-You will likely need to explicitly set the --bind port to the wemo script.
-Use `ifconfig` to determine your IP address, then launch with, e.g.
-
-    wemo --bind 10.0.1.6:54321 list
-
 Windows
 -------
 ouimeaux requires gevent version 1.0rc2 or higher. If you don't have the 
