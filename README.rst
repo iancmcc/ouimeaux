@@ -214,7 +214,7 @@ Release 0.4.3 (August 31, 2013)
 -------------------------------
 - Used new method of obtaining local IP for discovery that is less likely to
   return loopback
-- Exit with failure and instructions on solution if loopback IP is used
+- Exit with failure and instructions for solution if loopback IP is used
 - Updated installation docs to include python-dev and pip instructions (patch
   by fnaard)
 - Fixed README inclusion bug that occasionally broke installation via pip.
