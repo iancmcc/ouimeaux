@@ -163,6 +163,9 @@ on the command line:
 ``--bind IP:PORT``
     Bind to this host and port when listening for responses
 
+``--debug``
+    Enable debug logging to stdout
+
 Aliases configured in the file will be accessible on the command line as well::
 
     aliases:
@@ -206,6 +209,16 @@ find and download the binary installers for these packages here:
 
 Changelog
 ~~~~~~~~~
+
+Release 0.4.3 (August 31, 2013)
+-------------------------------
+- Used new method of obtaining local IP for discovery that is less likely to
+  return loopback
+- Exit with failure and instructions on solution if loopback IP is used
+- Updated installation docs to include python-dev and pip instructions (patch
+  by fnaard)
+- Fixed README inclusion bug that occasionally broke installation via pip.
+- Added ``--debug`` option to enable debug logging to stdout
 
 Release 0.4 (August 17, 2013)
 -----------------------------
