@@ -173,6 +173,33 @@ Aliases configured in the file will be accessible on the command line as well::
 Installation
 ~~~~~~~~~~~~
 
+Linux
+-----
+ouimeaux requires Python header files to build some dependencies, and is
+installed normally using pip or easy_install.
+
+Debian/Ubuntu::
+
+    sudo apt-get install python-setuptools python-dev
+    sudo easy_install pip
+    sudo pip install ouimeaux
+
+RHEL/CentOS/Fedora::
+
+    sudo yum -y install python-setuptools python-devel
+    sudo easy_install pip
+    sudo pip install ouimeaux
+
+If you wish to build from a local copy of the source, you can of course always
+execute::
+
+    sudo python setup.py install
+
+You will likely need to explicitly set the --bind port to the wemo script.
+Use `ifconfig` to determine your IP address, then launch with, e.g.
+
+    wemo --bind 10.0.1.6:54321 list
+
 Windows
 -------
 ouimeaux requires gevent version 1.0rc2 or higher. If you don't have the 
@@ -181,22 +208,6 @@ find and download the binary installers for these packages here:
 
 - gevent: https://github.com/SiteSupport/gevent/downloads
 - greenlet: https://pypi.python.org/pypi/greenlet
-
-Debian/Ubuntu
--------------
-The ouimeaux setup.py script uses python's easy_install, and the python
-header files.  You can use apt-get to install these.
-
-    sudo apt-get install python-setuptools python-dev
-
-Once these are installed, you should be able to easily build and install.
-
-    sudo python setup.py install
-
-You will likely need to explicitly set the --bind port to the wemo script.
-Use `ifconfig` to determine your IP address, then launch with, e.g.
-
-    wemo --bind 10.0.1.6:54321 list
 
 Changelog
 ~~~~~~~~~

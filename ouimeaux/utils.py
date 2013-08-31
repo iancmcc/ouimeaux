@@ -1,4 +1,7 @@
 import time
+import fcntl
+import socket
+import struct
 
 
 def tz_hours():
@@ -29,3 +32,14 @@ def get_timesync():
         dst=is_dst(),
         dstsupported=is_dst()).strip()
     return timesync
+
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('1.2.3.4', 9))
+        return s.getsockname()[0]
+    except socket.error:
+        return None
+    finally:
+        del s

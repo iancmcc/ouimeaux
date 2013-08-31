@@ -4,6 +4,8 @@ import gevent
 from gevent import socket
 from gevent.server import DatagramServer
 
+from .utils import get_ip_address
+
 
 log = logging.getLogger(__name__)
 
@@ -16,7 +18,7 @@ class UPnP(object):
 
     def __init__(self, handler, mcast_ip='239.255.255.250', mcast_port=1900, bind=None):
         if bind is None:
-            host = socket.gethostbyname(socket.gethostname())
+            host = get_ip_address()
             port = 54321
             bind = '{0}:{1}'.format(host, port)
         self.bind = bind
@@ -38,7 +40,7 @@ class UPnP(object):
                 except ValueError:
                     continue
             if (headers.get('x-user-agent', None) == 'redsonic'):
-                log.info("Found WeMo at {0}:{1}".format(*address))
+                log.debug("Found WeMo at {0}:{1}".format(*address))
                 self.clients[address[0]] = headers
                 gevent.spawn(self._handler, address, headers)
 
