@@ -1,5 +1,4 @@
 import time
-import fcntl
 import socket
 import struct
 
