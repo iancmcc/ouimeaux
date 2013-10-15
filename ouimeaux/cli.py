@@ -5,11 +5,19 @@ import argparse
 
 from .upnp import UPnPLoopbackException
 from .environment import Environment
-from ouimeaux.config import get_cache, in_home, WemoConfiguration
+from .config import get_cache, in_home, WemoConfiguration
 from .utils import matcher
 
 
 NOOP = lambda *x: None
+
+
+def _state(device, readable=False):
+    state = device.get_state(force_update=True)
+    if readable:
+        return "on" if state else "off"
+    else:
+        return state
 
 
 def scan(args, on_switch=NOOP, on_motion=NOOP):
@@ -63,7 +71,7 @@ Usage: wemo switch NAME (on|off|toggle|status)"""
                 found_state = switch.get_state(force_update=True)
                 switch.set_state(not found_state)
             elif state == "status":
-                print switch.get_state(force_update=True)
+                print _state(switch, args.human_readable)
             else:
                 getattr(switch, state)()
             sys.exit(0)
@@ -88,10 +96,10 @@ def list_(args):
 def status(args):
 
     def on_switch(switch):
-        print "Switch:", switch.name, switch.get_state(force_update=True)
+        print "Switch:", switch.name, '\t', _state(switch, args.human_readable)
 
     def on_motion(motion):
-        print "Motion:", motion.name, motion.get_state(force_update=True)
+        print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
 
     scan(args, on_switch, on_motion)
 
@@ -110,16 +118,22 @@ def clear(args):
 def wemo():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--timeout", type=int, default=5,
-                        help="Time in seconds to allow for discovery")
-    parser.add_argument("--bind", default=None,
+    parser.add_argument("-b", "--bind", default=None,
                         help="ip:port to which to bind the response server."
                              " Default is localhost:54321")
-    parser.add_argument("--no-cache", dest="use_cache", default=None,
+    parser.add_argument("-d", "--debug", action="store_true", default=False,
+                        help="Enable debug logging")
+    parser.add_argument("-e", "--exact-match", action="store_true", 
+                        default=False,
+                        help="Disable fuzzy matching for device names")
+    parser.add_argument("-f", "--no-cache", dest="use_cache", default=None,
                         action="store_false",
                         help="Disable the device cache")
-    parser.add_argument("--debug", action="store_true", default=False,
-                        help="Enable debug logging")
+    parser.add_argument("-v", "--human-readable", dest="human_readable", 
+                        action="store_true", default=False,
+                        help="Print statuses as human-readable words")
+    parser.add_argument("-t", "--timeout", type=int, default=5,
+                        help="Time in seconds to allow for discovery")
     subparsers = parser.add_subparsers()
 
     clearparser = subparsers.add_parser("clear", 
