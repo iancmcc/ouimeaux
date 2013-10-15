@@ -166,7 +166,17 @@ disabled with the ``-e`` option)::
 
     $ wemo switch tvrm on
 
-You can also clear the device cache::
+Aliases configured in the file will be accessible on the command line as well::
+
+    aliases:
+        tv: TV Room Lights
+
+    $ wemo switch tv on
+
+Note: If an alias is used on the command line, fuzzy matching will not be
+attempted.
+
+You can also clear the device cache from the command line::
     
     $ wemo clear
 
@@ -189,15 +199,6 @@ on the command line:
     Print statuses as human-readable words
 
 
-Aliases configured in the file will be accessible on the command line as well::
-
-    aliases:
-        tv: TV Room Lights
-
-    $ wemo switch tv on
-
-Note: If an alias is used on the command line, fuzzy matching will not be
-attempted.
 
 
 Installation
