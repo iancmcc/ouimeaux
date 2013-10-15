@@ -1,6 +1,7 @@
 import time
 import socket
 import struct
+import re
 
 
 def tz_hours():
@@ -42,3 +43,11 @@ def get_ip_address():
         return None
     finally:
         del s
+
+
+def matcher(match_string):
+    pattern = re.compile('.*?'.join(re.escape(c) for c in match_string.lower()))
+    def matches(s):
+        return pattern.search(s.lower()) is not None
+    return matches
+
