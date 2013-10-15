@@ -141,14 +141,30 @@ switches on and off. To list devices::
 
 Default is to search for 5 seconds; you can pass ``--timeout`` to change that.
 
+You can also print the status of every device found in your environment (the
+``-v`` option is available to print on/off instead of 0/1)::
+
+    $ wemo status
+
 To turn a switch on and off, you first have to know the name. Then::
 
     $ wemo switch "TV Room" on
     $ wemo switch "TV Room" off
 
-Or, you can toggle the device::
+You can also toggle the device::
 
     $ wemo switch "TV Room" toggle
+
+Or check its current status (the ``-v`` option will print the word on/off
+instead of 0/1)::
+
+    $ wemo -v switch "TV Room" status
+    on
+
+The ``wemo`` script will do fuzzy matching of the name you pass in (this can be
+disabled with the ``-e`` option)::
+
+    $ wemo switch tvrm on
 
 You can also clear the device cache::
     
@@ -157,14 +173,21 @@ You can also clear the device cache::
 The ``wemo`` script will obey configured settings; they can also be overridden
 on the command line:
 
-``--no-cache``
-    Disable the device cache
-
-``--bind IP:PORT``
+``-b``, ``--bind IP:PORT``
     Bind to this host and port when listening for responses
 
-``--debug``
+``-d``, ``--debug``
     Enable debug logging to stdout
+
+``-e``, ``--exact-match``
+    Disable fuzzy matching
+
+``-f``, ``--no-cache``
+    Disable the device cache
+
+``-v``, ``--human-readable``
+    Print statuses as human-readable words
+
 
 Aliases configured in the file will be accessible on the command line as well::
 
@@ -172,6 +195,10 @@ Aliases configured in the file will be accessible on the command line as well::
         tv: TV Room Lights
 
     $ wemo switch tv on
+
+Note: If an alias is used on the command line, fuzzy matching will not be
+attempted.
+
 
 Installation
 ~~~~~~~~~~~~
@@ -209,6 +236,15 @@ find and download the binary installers for these packages here:
 
 Changelog
 ~~~~~~~~~
+
+Release 0.5 (October 14, 2013)
+-------------------------------
+- Added fuzzy matching of device name when searching/toggling from command line
+- Added ``status`` mode to print status for all devices
+- Added ``switch status`` mode to print status for specific device
+- Added flags for all command-line options
+- Fixed #9: Removed unused fcntl import that precluded Windows usage (thanks to
+  deepseven)
 
 Release 0.4.3 (August 31, 2013)
 -------------------------------
