@@ -25,7 +25,7 @@ functions called when a Switch or Motion device is identified::
     ...     print "Switch found!", switch.name
     ...
     >>> def on_motion(motion):
-    ...     print "Motion found!", switch.motion
+    ...     print "Motion found!", motion.name
     ...
     >>> env = Environment(on_switch, on_motion)
 
@@ -237,6 +237,14 @@ find and download the binary installers for these packages here:
 
 Changelog
 ~~~~~~~~~
+
+Release 0.5.1 (November 9, 2013)
+-------------------------------
+- Fixed #10: Updated subscriber listener to use more reliable method of
+  retrieving non-loopback IP address; updated docs to fix typo in listener
+  registration example (thanks to benhoyle, francxk)
+- Fixed #11: Remove instancemethod objects before attempting to pickle devices
+  in the cache (thanks piperde, JonPenner, tomtomau, masilu77)
 
 Release 0.5 (October 14, 2013)
 -------------------------------
