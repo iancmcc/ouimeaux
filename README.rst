@@ -239,7 +239,7 @@ Changelog
 ~~~~~~~~~
 
 Release 0.5.1 (November 9, 2013)
--------------------------------
+--------------------------------
 - Fixed #10: Updated subscriber listener to use more reliable method of
   retrieving non-loopback IP address; updated docs to fix typo in listener
   registration example (thanks to @benhoyle, @francxk)
