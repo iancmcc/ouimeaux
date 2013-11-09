@@ -242,9 +242,9 @@ Release 0.5.1 (November 9, 2013)
 -------------------------------
 - Fixed #10: Updated subscriber listener to use more reliable method of
   retrieving non-loopback IP address; updated docs to fix typo in listener
-  registration example (thanks to benhoyle, francxk)
+  registration example (thanks to @benhoyle, @francxk)
 - Fixed #11: Remove instancemethod objects before attempting to pickle devices
-  in the cache (thanks piperde, JonPenner, tomtomau, masilu77)
+  in the cache (thanks @piperde, @JonPenner, @tomtomau, @masilu77)
 
 Release 0.5 (October 14, 2013)
 -------------------------------
@@ -253,7 +253,7 @@ Release 0.5 (October 14, 2013)
 - Added ``switch status`` mode to print status for specific device
 - Added flags for all command-line options
 - Fixed #9: Removed unused fcntl import that precluded Windows usage (thanks to
-  deepseven)
+  @deepseven)
 
 Release 0.4.3 (August 31, 2013)
 -------------------------------
@@ -261,7 +261,7 @@ Release 0.4.3 (August 31, 2013)
   return loopback
 - Exit with failure and instructions for solution if loopback IP is used
 - Updated installation docs to include python-dev and pip instructions (patch
-  by fnaard)
+  by @fnaard)
 - Fixed README inclusion bug that occasionally broke installation via pip.
 - Added ``--debug`` option to enable debug logging to stdout
 
@@ -283,7 +283,7 @@ Release 0.3 (May 25, 2013)
 Release 0.2 (April 21, 2013)
 ------------------------------
 - Fixed #1: Added ability to subscribe to motion and switch state change events.
-- Added Windows installation details to README (patch by brianpeiris)
+- Added Windows installation details to README (patch by @brianpeiris)
 - Cleaned up UDP server lifecycle so rediscovery doesn't try to start it back up.
 
 Release 0.1 (February 2, 2013)
