@@ -40,6 +40,12 @@ class Device(object):
             return int(self.basicevent.GetBinaryState()['BinaryState'])
         return self._state
 
+    def __getstate__(self):
+        odict = self.__dict__.copy() # copy the dict since we change it
+        if 'register_listener' in odict:
+            del odict['register_listener']
+        return odict
+
     def get_service(self, name):
         try:
             return self.services[name]
