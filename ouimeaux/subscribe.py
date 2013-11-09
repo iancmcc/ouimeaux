@@ -8,6 +8,8 @@ import gevent
 from gevent import socket
 from gevent.wsgi import WSGIServer
 
+from .utils import get_ip_address
+
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +33,7 @@ class SubscriptionRegistry(object):
         if sid is not None:
             headers['SID'] = sid
         else:
-            host = socket.gethostbyname(socket.gethostname())
+            host = get_ip_address()
             headers.update({
                 "CALLBACK": '<http://%s:8989>' % host,
                 "NT": "upnp:event"
