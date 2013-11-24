@@ -238,6 +238,11 @@ find and download the binary installers for these packages here:
 Changelog
 ~~~~~~~~~
 
+Release 0.5.2 (November 23, 2013)
+--------------------------------
+- Fixed #14: Indicate Connection:close header to avoid logging when WeMo sends
+  invalid HTTP response.
+
 Release 0.5.1 (November 9, 2013)
 --------------------------------
 - Fixed #10: Updated subscriber listener to use more reliable method of
