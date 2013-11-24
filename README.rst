@@ -239,7 +239,7 @@ Changelog
 ~~~~~~~~~
 
 Release 0.5.2 (November 23, 2013)
---------------------------------
+---------------------------------
 - Fixed #14: Indicate Connection:close header to avoid logging when WeMo sends
   invalid HTTP response.
 
