@@ -43,9 +43,10 @@ class SubscriptionRegistry(object):
         response = requests.request(method="SUBSCRIBE", url=url,
                                     headers=headers)
 
-        timeout = int(response.headers['timeout'].replace('Second-', ''))
-        sid = response.headers['sid']
-        gevent.spawn_later(timeout, self._resubscribe, url, sid)
+        timeout = int(response.headers.get('timeout', '1801').replace(
+            'Second-', ''))
+        sid = response.headers.get('sid', sid)
+        gevent.spawn_later(timeout - 1, self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
         device = self._devices[environ['REMOTE_ADDR']]
