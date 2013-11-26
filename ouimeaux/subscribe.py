@@ -76,7 +76,7 @@ class SubscriptionRegistry(object):
         """
         server = getattr(self, "_server", None)
         if server is None:
-            server = WSGIServer(('', 8989), self._handle)
+            server = WSGIServer(('', 8989), self._handle, log=None)
             self._server = server
         return server
 
