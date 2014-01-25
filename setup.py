@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.5.2'
+version = '0.6'
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
     description = f.read()
@@ -23,11 +23,8 @@ setup(name='ouimeaux',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      dependency_links = [
-          'https://github.com/downloads/surfly/gevent/gevent-1.0rc2.tar.gz#egg=gevent-1.0.rc2'
-      ],
       install_requires=[
-          'gevent >= 1.0rc2',
+          'gevent >= 1.0',
           'requests',
           'pyyaml'
       ],
