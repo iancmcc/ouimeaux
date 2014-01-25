@@ -88,10 +88,11 @@ when switches and motions change state (on/off, or motion detected)::
     ...     print "Motion detected!"
     ...
     >>> env.get_motion('Front Hallway').register_listener(on_motion)
-    >>> env.wait()
+    >>> env.wait(timeout=60)
 
 Note the use of ``Environment.wait()`` to give control to the event loop for
-events to be detected.
+events to be detected. A timeout in seconds may optionally be specified;
+default is no timeout.
 
 Switches
 --------
@@ -248,6 +249,11 @@ find and download the binary installers for these packages here:
 
 Changelog
 ~~~~~~~~~
+
+Release 0.5.3 (January 25, 2014)
+------------------------------
+- Fixed #20: Allow timeout in environment.wait()
+- Fixed #21: Add Insight support
 
 Release 0.5.2 (November 23, 2013)
 ---------------------------------
