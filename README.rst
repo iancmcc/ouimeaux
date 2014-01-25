@@ -101,6 +101,18 @@ Motions
 -------
 Motions have one shortcut method defined: ``get_state``.
 
+Insight
+-------
+In addition to the normal Switch methods, Insight switches have several metrics
+exposed:
+
+    insight.today_kwh
+    insight.current_power
+    insight.today_ontime
+    insight.on_for
+    insight.in_standby_since
+    insight.today_standby_time
+
 Device Cache
 ------------
 By default, device results are cached on the filesystem for quicker
@@ -197,7 +209,6 @@ on the command line:
 
 ``-v``, ``--human-readable``
     Print statuses as human-readable words
-
 
 
 
