@@ -10,8 +10,8 @@ Tests for `ouimeaux` module.
 
 import unittest
 
-from ouimeaux import ouimeaux
 
+import ouimeaux
 
 class TestOuimeaux(unittest.TestCase):
 
