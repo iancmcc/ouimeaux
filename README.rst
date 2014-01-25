@@ -251,7 +251,7 @@ Changelog
 ~~~~~~~~~
 
 Release 0.5.3 (January 25, 2014)
-------------------------------
+--------------------------------
 - Fixed #20: Allow timeout in environment.wait()
 - Fixed #21: Add Insight support
 
