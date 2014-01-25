@@ -6,6 +6,7 @@ from ouimeaux.config import get_cache, WemoConfiguration
 from ouimeaux.motion import Motion
 from ouimeaux.subscribe import SubscriptionRegistry
 from ouimeaux.switch import Switch
+from ouimeaux.insight import Insight
 from ouimeaux.upnp import UPnP
 
 
@@ -111,6 +112,8 @@ class Environment(object):
             klass = Switch
         elif usn.startswith('uuid:Lightswitch'):
             klass = Switch
+        elif usn.startswith('uuid:Insight'):
+            klass = Insight
         elif usn.startswith('uuid:Sensor'):
             klass = Motion
         else:
