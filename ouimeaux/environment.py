@@ -76,13 +76,16 @@ class Environment(object):
             self.registry.server.set_spawn(2)
             self.registry.server.start()
 
-    def wait(self):
+    def wait(self, timeout=None):
         """
         Wait for events.
         """
         try:
-            while True:
-                gevent.sleep(1000)
+            if timeout:
+                gevent.sleep(timeout)
+            else:
+                while True:
+                    gevent.sleep(1000)
         except (KeyboardInterrupt, SystemExit, Exception):
             pass
 
