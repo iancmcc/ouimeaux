@@ -4,7 +4,7 @@ import gevent
 from gevent import socket
 from gevent.server import DatagramServer
 
-from .utils import get_ip_address
+from ouimeaux.utils import get_ip_address
 
 
 log = logging.getLogger(__name__)

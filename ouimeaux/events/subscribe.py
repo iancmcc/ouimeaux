@@ -8,7 +8,7 @@ import gevent
 from gevent import socket
 from gevent.wsgi import WSGIServer
 
-from .utils import get_ip_address
+from ouimeaux.utils import get_ip_address
 
 
 log = logging.getLogger(__name__)

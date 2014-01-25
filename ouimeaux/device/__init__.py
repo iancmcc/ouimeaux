@@ -3,8 +3,8 @@ from urlparse import urlparse
 
 import requests
 
-from ouimeaux.service import Service
-from ouimeaux.xsd import device as deviceParser
+from ouimeaux.remote.service import Service
+from ouimeaux.remote.xsd import device as deviceParser
 
 
 log = logging.getLogger(__name__)

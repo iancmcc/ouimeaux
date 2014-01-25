@@ -3,7 +3,7 @@ import sys
 import logging
 import argparse
 
-from .upnp import UPnPLoopbackException
+from .server.upnp import UPnPLoopbackException
 from .environment import Environment
 from .config import get_cache, in_home, WemoConfiguration
 from .utils import matcher

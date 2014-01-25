@@ -3,11 +3,11 @@ import logging
 import gevent
 from ouimeaux.config import get_cache, WemoConfiguration
 
-from ouimeaux.motion import Motion
-from ouimeaux.subscribe import SubscriptionRegistry
-from ouimeaux.switch import Switch
-from ouimeaux.insight import Insight
-from ouimeaux.upnp import UPnP
+from ouimeaux.device.motion import Motion
+from ouimeaux.events.subscribe import SubscriptionRegistry
+from ouimeaux.device.switch import Switch
+from ouimeaux.device.insight import Insight
+from ouimeaux.server.upnp import UPnP
 
 
 _NOOP = lambda *x: None
