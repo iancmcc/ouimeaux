@@ -30,7 +30,7 @@ class SubscriptionRegistry(object):
         self._resubscribe(device.basicevent.eventSubURL)
 
     def _resubscribe(self, url, sid=None):
-        headers = {'TIMEOUT': 'infinite'}
+        headers = {'TIMEOUT': 300}
         if sid is not None:
             headers['SID'] = sid
         else:
@@ -46,7 +46,7 @@ class SubscriptionRegistry(object):
         timeout = int(response.headers.get('timeout', '1801').replace(
             'Second-', ''))
         sid = response.headers.get('sid', sid)
-        gevent.spawn_later(timeout - 1, self._resubscribe, url, sid)
+        gevent.spawn_later(timeout/2, self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
         device = self._devices[environ['REMOTE_ADDR']]

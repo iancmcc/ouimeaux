@@ -4,10 +4,12 @@ import gevent
 from ouimeaux.config import get_cache, WemoConfiguration
 
 from ouimeaux.device.motion import Motion
-from ouimeaux.events.subscribe import SubscriptionRegistry
+from ouimeaux.signals import device_discovered
+
+from ouimeaux.subscribe import SubscriptionRegistry
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
-from ouimeaux.server.upnp import UPnP
+from ouimeaux.discovery import UPnP
 
 
 _NOOP = lambda *x: None
@@ -23,6 +25,7 @@ class StopBroadcasting(Exception):
 
 class UnknownDevice(Exception):
     pass
+
 
 
 class Environment(object):
@@ -45,7 +48,8 @@ class Environment(object):
         @type bind: str
         """
         self._config = WemoConfiguration(filename=config_filename)
-        self.upnp = UPnP(self._found_device, bind=bind or self._config.bind)
+        self.upnp = UPnP(bind=bind or self._config.bind)
+        device_discovered.connect(self._found_device, self.upnp)
         self.registry = SubscriptionRegistry()
         if with_cache is None:
             with_cache = (self._config.cache if self._config.cache is not None else True)
@@ -108,7 +112,9 @@ class Environment(object):
             except StopBroadcasting:
                 return
 
-    def _found_device(self, address, headers):
+    def _found_device(self, sender, **kwargs):
+        address = kwargs['address']
+        headers = kwargs['headers']
         log.info("Found device at %s" % (address,))
         usn = headers['usn']
         if usn.startswith('uuid:Socket'):
