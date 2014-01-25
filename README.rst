@@ -1,6 +1,6 @@
 ==============================
 ouimeaux
-===============================
+==============================
 
 .. image:: https://badge.fury.io/py/ouimeaux.png
     :target: http://badge.fury.io/py/ouimeaux
