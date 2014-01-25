@@ -1,36 +1,58 @@
-from setuptools import setup, find_packages
-import sys, os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-version = '0.5.3'
+import os
+import sys
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
-    description = f.read()
+here = lambda *a: os.path.join(os.path.dirname(__file__), *a)
 
-setup(name='ouimeaux',
-      version=version,
-      description="Python API to Belkin WeMo devices",
-      long_description=description,
-      classifiers=[
-          "License :: OSI Approved :: BSD License",
-          "Topic :: Home Automation",
-          "Programming Language :: Python"
-      ], 
-      keywords='belkin wemo soap api homeautomation control',
-      author='Ian McCracken',
-      author_email='ian.mccracken@gmail.com',
-      url='http://github.com/iancmcc/ouimeaux',
-      license='BSD',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-      include_package_data=True,
-      zip_safe=False,
-      install_requires=[
-          'gevent >= 1.0',
-          'requests',
-          'pyyaml'
-      ],
-      entry_points={
-          'console_scripts': [
-              'wemo = ouimeaux.cli:wemo'
-          ]
-      },
-      )
+
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    sys.exit()
+
+readme = open(here('README.rst')).read()
+history = open(here('HISTORY.rst')).read().replace('.. :changelog:', '')
+requirements = [x.strip() for x in open(here('requirements.txt')).readlines()]
+
+setup(
+    name='ouimeaux',
+    version='0.9',
+    description='Open source control for Belkin WeMo devices',
+    long_description=readme + '\n\n' + history,
+    author='Ian McCracken',
+    author_email='ian.mccracken@gmail.com',
+    url='https://github.com/iancmcc/ouimeaux',
+    packages=[
+        'ouimeaux',
+    ],
+    package_dir={'ouimeaux': 'ouimeaux'},
+    include_package_data=True,
+    install_requires=requirements,
+    license="BSD",
+    zip_safe=False,
+    keywords='ouimeaux',
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Topic :: Home Automation',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Natural Language :: English',
+        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+    ],
+    entry_points={
+        'console_scripts': [
+            'wemo = ouimeaux.cli:wemo'
+        ]
+    },
+    test_suite='tests',
+)

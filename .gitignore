@@ -17,7 +17,6 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
 
 # Installer logs
 pip-log.txt
@@ -35,4 +34,9 @@ nosetests.xml
 .project
 .pydevproject
 
-.idea
+# Complexity
+output/*.html
+output/*/index.html
+
+# Sphinx
+docs/_build
