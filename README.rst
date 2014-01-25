@@ -104,7 +104,7 @@ Motions have one shortcut method defined: ``get_state``.
 Insight
 -------
 In addition to the normal Switch methods, Insight switches have several metrics
-exposed:
+exposed::
 
     insight.today_kwh
     insight.current_power
