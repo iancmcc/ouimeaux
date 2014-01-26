@@ -1,9 +1,5 @@
 # Config file for automatic testing at travis-ci.org
 
-branches:
-    only:
-        - develop
-
 language: python
 
 python:
