@@ -7,8 +7,12 @@ from flask import send_file, make_response, abort
 from flask.ext.restful import reqparse, abort, Api, Resource
 
 
+from ouimeaux.signals import statechange
 from ouimeaux.device.switch import Switch
 from ouimeaux.environment import Environment, UnknownDevice
+from socketio import socketio_manage
+from socketio.namespace import BaseNamespace
+from socketio.mixins import BroadcastMixin
 
 
 app = Flask(__name__)
@@ -80,12 +84,36 @@ api.add_resource(EnvironmentResource, '/api/environment')
 api.add_resource(DeviceResource, '/api/device/<string:name>')
 
 
+class SocketNamespace(BaseNamespace):
+
+    def update_state(self, sender, **kwargs):
+        data = serialize(sender)
+        data['state'] = kwargs.get('state', data['state'])
+        self.emit("send:devicestate", data)
+
+    def on_statechange(self, data):
+        print data
+        ENV.get(data['name']).set_state(data['state'])
+
+    def on_join(self, data):
+        statechange.connect(self.update_state,
+                            unique=False,
+                            dispatch_uid=id(self))
+        for device in ENV:
+            self.update_state(device)
+
+    def __del__(self):
+        statechange.disconnect(dispatch_uid=id(self))
+
+
 # Now for the WebSocket api
+@app.route("/socket.io/<path:path>")
+def run_socketio(**kwargs):
+    socketio_manage(request.environ, {'': SocketNamespace})
 
 
 # routing for basic pages (pass routing onto the Angular app)
 @app.route('/')
-@app.route('/about')
 def basic_pages(**kwargs):
     return make_response(open('templates/index.html').read())
 

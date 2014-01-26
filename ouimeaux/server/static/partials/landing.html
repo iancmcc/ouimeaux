@@ -1,14 +1,16 @@
-
 <div class="header-section">
-    <div class="row header-row">
-        <div class="span12 masthead">
-            <h1 class="heading">Welcome Home.</h1>
-        </div>
-    </div>
+    <ul>
+        <li ng-repeat="device in data">
+        <button type="button" 
+            ng-click="toggleState(device)"
+            ng-class="{'btn': true, 'btn-default': device.state==0, 'btn-success':device.state==1}">
+             <span class="glyphicon glyphicon-off"></span>
+            {{device.name}}
+
+        </button>
+        </li>
+    </ul>
 </div>
 <div class="header-push">
 </div>
 
-<div>
-    <h3><a href="/blog">Check out my blog</a></h3>
-</div>

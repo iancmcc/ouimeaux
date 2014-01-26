@@ -3,3 +3,4 @@ requests
 pyyaml
 pysignals
 flask-restful
+gevent-socketio

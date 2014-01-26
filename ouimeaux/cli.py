@@ -116,13 +116,14 @@ def clear(args):
 
 
 def server(args):
-    from gevent.wsgi import WSGIServer
+    from socketio.server import SocketIOServer
     from ouimeaux.server import app, initialize
     logging.basicConfig(level=logging.INFO)
     initialize()
     try:
         # TODO: Move this to configuration
-        WSGIServer(('0.0.0.0', 5000), app).serve_forever()
+        SocketIOServer(('0.0.0.0', 5000), app,
+                       resource="socket.io").serve_forever()
     except (KeyboardInterrupt, SystemExit):
         sys.exit(0)
 
