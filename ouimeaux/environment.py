@@ -1,15 +1,15 @@
 import logging
 
 import gevent
+
 from ouimeaux.config import get_cache, WemoConfiguration
-
-from ouimeaux.device.motion import Motion
-from ouimeaux.signals import device_discovered
-
-from ouimeaux.subscribe import SubscriptionRegistry
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
+from ouimeaux.device.lightswitch import LightSwitch
+from ouimeaux.device.motion import Motion
 from ouimeaux.discovery import UPnP
+from ouimeaux.signals import discovered
+from ouimeaux.subscribe import SubscriptionRegistry
 
 
 _NOOP = lambda *x: None
@@ -49,7 +49,7 @@ class Environment(object):
         """
         self._config = WemoConfiguration(filename=config_filename)
         self.upnp = UPnP(bind=bind or self._config.bind)
-        device_discovered.connect(self._found_device, self.upnp)
+        discovered.connect(self._found_device, self.upnp)
         self.registry = SubscriptionRegistry()
         if with_cache is None:
             with_cache = (self._config.cache if self._config.cache is not None else True)
@@ -120,7 +120,7 @@ class Environment(object):
         if usn.startswith('uuid:Socket'):
             klass = Switch
         elif usn.startswith('uuid:Lightswitch'):
-            klass = Switch
+            klass = LightSwitch
         elif usn.startswith('uuid:Insight'):
             klass = Insight
         elif usn.startswith('uuid:Sensor'):

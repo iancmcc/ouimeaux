@@ -6,7 +6,7 @@ from gevent.server import DatagramServer
 
 from ouimeaux.utils import get_ip_address
 from pysignals import receiver
-from ouimeaux.signals import device_discovered
+from ouimeaux.signals import discovered
 
 
 log = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class UPnP(object):
             if (headers.get('x-user-agent', None) == 'redsonic'):
                 log.debug("Found WeMo at {0}:{1}".format(*address))
                 self.clients[address[0]] = headers
-                gevent.spawn(device_discovered.send, self, address=address,
+                gevent.spawn(discovered.send, self, address=address,
                         headers=headers)
 
     @property
@@ -83,7 +83,7 @@ class UPnP(object):
 def test():
     logging.basicConfig(level=logging.DEBUG)
 
-    @receiver(device_discovered)
+    @receiver(discovered)
     def handler(sender, **kwargs):
         print "I GOT ONE"
         print kwargs['address'], kwargs['headers']
