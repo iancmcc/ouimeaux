@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    ouimeaux.xsd
+    ouimeaux.device
 
 Submodules
 ----------
@@ -27,10 +27,10 @@ ouimeaux.config module
     :undoc-members:
     :show-inheritance:
 
-ouimeaux.device module
-----------------------
+ouimeaux.discovery module
+-------------------------
 
-.. automodule:: ouimeaux.device
+.. automodule:: ouimeaux.discovery
     :members:
     :undoc-members:
     :show-inheritance:
@@ -43,34 +43,10 @@ ouimeaux.environment module
     :undoc-members:
     :show-inheritance:
 
-ouimeaux.insight module
+ouimeaux.signals module
 -----------------------
 
-.. automodule:: ouimeaux.insight
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ouimeaux.motion module
-----------------------
-
-.. automodule:: ouimeaux.motion
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ouimeaux.ouimeaux module
-------------------------
-
-.. automodule:: ouimeaux.ouimeaux
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ouimeaux.service module
------------------------
-
-.. automodule:: ouimeaux.service
+.. automodule:: ouimeaux.signals
     :members:
     :undoc-members:
     :show-inheritance:
@@ -79,22 +55,6 @@ ouimeaux.subscribe module
 -------------------------
 
 .. automodule:: ouimeaux.subscribe
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ouimeaux.switch module
-----------------------
-
-.. automodule:: ouimeaux.switch
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ouimeaux.upnp module
---------------------
-
-.. automodule:: ouimeaux.upnp
     :members:
     :undoc-members:
     :show-inheritance:

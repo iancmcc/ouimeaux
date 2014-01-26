@@ -10,6 +10,9 @@ if _main:
 # Fires when a device responds to a broadcast 
 discovered = Signal(providing_args=["address", "headers"])
 
+# Fires when a device is found and added to the environment
+devicefound = Signal()
+
 # Fires when a subscriber receives an event
 subscription = Signal(providing_args=["type", "value"])
 
@@ -21,4 +24,3 @@ statechange = Signal(providing_args=["state"])
 def _got_subscription(sender, **kwargs):
     if kwargs['type'] == 'BinaryState':
         statechange.send(sender, state=int(kwargs['value']))
-

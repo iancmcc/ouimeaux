@@ -8,7 +8,7 @@ from ouimeaux.device.insight import Insight
 from ouimeaux.device.lightswitch import LightSwitch
 from ouimeaux.device.motion import Motion
 from ouimeaux.discovery import UPnP
-from ouimeaux.signals import discovered
+from ouimeaux.signals import discovered, devicefound
 from ouimeaux.subscribe import SubscriptionRegistry
 
 
@@ -148,6 +148,7 @@ class Environment(object):
         if cache if cache is not None else self._with_cache:
             with get_cache() as c:
                 c.add_device(device)
+        devicefound.send(device)
         callback(device)
 
     def list_switches(self):

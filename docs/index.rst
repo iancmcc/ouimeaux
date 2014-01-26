@@ -14,6 +14,8 @@ Contents:
    readme
    installation
    usage
+   wemo
+   configuration
    contributing
    authors
    history
