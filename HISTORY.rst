@@ -3,6 +3,13 @@
 History
 -------
 
+Release 0.6 (January 25, 2014)
+++++++++++++++++++++++++++++++++
+- Added signals framework
+- Fixed #16, #19, #22: Defensively resubscribe to events when device responds with an error
+- Fixed #15: Signals framework includes relevant device when sending signal
+- Refactored structure, added Sphinx docs
+
 Release 0.5.3 (January 25, 2014)
 ++++++++++++++++++++++++++++++++
 - Fixed #20: Allow timeout in environment.wait()
