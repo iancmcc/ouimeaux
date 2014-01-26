@@ -10,6 +10,7 @@ from ouimeaux.device.motion import Motion
 from ouimeaux.discovery import UPnP
 from ouimeaux.signals import discovered, devicefound
 from ouimeaux.subscribe import SubscriptionRegistry
+from ouimeaux.utils import matcher
 
 
 _NOOP = lambda *x: None
@@ -60,6 +61,10 @@ class Environment(object):
         self._motion_callback = motion_callback
         self._switches = {}
         self._motions = {}
+        self.devices = {}
+
+    def __iter__(self):
+        return self.devices.itervalues()
 
     def start(self):
         """
@@ -112,6 +117,7 @@ class Environment(object):
             except StopBroadcasting:
                 return
 
+
     def _found_device(self, sender, **kwargs):
         address = kwargs['address']
         headers = kwargs['headers']
@@ -140,6 +146,7 @@ class Environment(object):
             registry = self._motions
         else:
             return
+        self.devices[device.name] = device
         registry[device.name] = device
         if self._with_subscribers:
             self.registry.register(device)
@@ -162,6 +169,20 @@ class Environment(object):
         List motions discovered in the environment.
         """
         return self._motions.keys()
+
+    def get(self, name):
+        alias = self._config.aliases.get(name)
+        if alias:
+            matches = lambda x: x == alias
+        elif name:
+            matches = matcher(name)
+        else:
+            matches = _NOOP
+        for k in self.devices:
+            if matches(k):
+                return self.devices[k]
+        else:
+            raise UnknownDevice(name)
 
     def get_switch(self, name):
         """

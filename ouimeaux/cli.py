@@ -115,6 +115,18 @@ def clear(args):
     print "Device cache cleared."
 
 
+def server(args):
+    from gevent.wsgi import WSGIServer
+    from ouimeaux.server import app, initialize
+    logging.basicConfig(level=logging.INFO)
+    initialize()
+    try:
+        # TODO: Move this to configuration
+        WSGIServer(('0.0.0.0', 5000), app).serve_forever()
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(0)
+
+
 def wemo():
     parser = argparse.ArgumentParser()
 
@@ -153,6 +165,10 @@ def wemo():
     listparser = subparsers.add_parser("list",
                           help="List all devices found in the environment")
     listparser.set_defaults(func=list_)
+
+    serverparser = subparsers.add_parser("server",
+                          help="Run the API server and web app")
+    serverparser.set_defaults(func=server)
 
     args = parser.parse_args()
 
