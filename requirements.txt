@@ -1,0 +1,4 @@
+gevent >= 1.0
+requests
+pyyaml
+pysignals

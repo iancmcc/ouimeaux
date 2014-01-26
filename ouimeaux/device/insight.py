@@ -1,4 +1,4 @@
-from ouimeaux.switch import Switch
+from .switch import Switch
 
 class Insight(Switch):
 

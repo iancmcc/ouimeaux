@@ -3,7 +3,7 @@ from xml.etree import cElementTree as et
 
 import requests
 
-from ouimeaux.xsd import service as serviceParser
+from .xsd import service as serviceParser
 
 
 log = logging.getLogger(__name__)

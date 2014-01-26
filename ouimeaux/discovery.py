@@ -4,7 +4,9 @@ import gevent
 from gevent import socket
 from gevent.server import DatagramServer
 
-from .utils import get_ip_address
+from ouimeaux.utils import get_ip_address
+from pysignals import receiver
+from ouimeaux.signals import discovered
 
 
 log = logging.getLogger(__name__)
@@ -18,11 +20,10 @@ class UPnPLoopbackException(Exception):
 
 class UPnP(object):
     """
-    Makes M-SEARCH requests, filters out non-WeMo responses, and calls a
-    user-provided handler with the results.
+    Makes M-SEARCH requests, filters out non-WeMo responses, and dispatches
+    signals with the results.
     """
-
-    def __init__(self, handler, mcast_ip='239.255.255.250', mcast_port=1900, bind=None):
+    def __init__(self, mcast_ip='239.255.255.250', mcast_port=1900, bind=None):
         if bind is None:
             host = get_ip_address()
             if host.startswith('127.'):
@@ -34,7 +35,6 @@ class UPnP(object):
         self.mcast_ip = mcast_ip
         self.mcast_port = mcast_port
         self.clients = {}
-        self._handler = handler
 
     def _response_received(self, message, address):
         log.debug("Received a response from {0}:{1}".format(*address))
@@ -51,7 +51,8 @@ class UPnP(object):
             if (headers.get('x-user-agent', None) == 'redsonic'):
                 log.debug("Found WeMo at {0}:{1}".format(*address))
                 self.clients[address[0]] = headers
-                gevent.spawn(self._handler, address, headers)
+                gevent.spawn(discovered.send, self, address=address,
+                        headers=headers)
 
     @property
     def server(self):
@@ -82,11 +83,12 @@ class UPnP(object):
 def test():
     logging.basicConfig(level=logging.DEBUG)
 
-    def handler(address, headers):
+    @receiver(discovered)
+    def handler(sender, **kwargs):
         print "I GOT ONE"
-        print address, headers
+        print kwargs['address'], kwargs['headers']
 
-    upnp = UPnP(handler)
+    upnp = UPnP()
     upnp.server.set_spawn(1)
     upnp.server.start()
     log.debug("Started server, listening for responses")

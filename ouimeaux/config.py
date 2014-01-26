@@ -79,7 +79,11 @@ class Cache(object):
 
     @property
     def devices(self):
-        return self._shelf.setdefault('devices', {}).itervalues()
+        try:
+            return self._shelf.setdefault('devices', {}).itervalues()
+        except ImportError:
+            self._shelf.clear()
+            return self.devices
 
 
 _CACHE_LOCK = RLock()
