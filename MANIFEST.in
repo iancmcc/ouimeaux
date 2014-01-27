@@ -4,3 +4,4 @@ include HISTORY.rst
 include LICENSE
 include README.rst
 include requirements.txt
+graft ouimeaux
