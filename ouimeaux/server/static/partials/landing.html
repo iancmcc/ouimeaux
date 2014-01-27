@@ -1,16 +1,11 @@
 <div class="header-section">
-    <ul>
-        <li ng-repeat="device in data">
-        <button type="button" 
+        <p ng-repeat="device in data">
+        <a role="button" 
+            class="btn btn-large btn-block"
             ng-click="toggleState(device)"
-            ng-class="{'btn': true, 'btn-default': device.state==0, 'btn-success':device.state==1}">
+            ng-class="{'btn-default': device.state==0, 'btn-success':device.state==1}">
              <span class="glyphicon glyphicon-off"></span>
             {{device.name}}
-
-        </button>
-        </li>
-    </ul>
+        </a>
+        </p>
 </div>
-<div class="header-push">
-</div>
-

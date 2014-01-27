@@ -19,23 +19,43 @@
     <script src="/static/lib/jquery/jquery.min.js"></script>
     <script src="/static/lib/bootstrap/bootstrap.min.js"></script>
     <script src="/static/lib/socket.io/socket.io.js"></script>
+    <style>
+        .header, .footer {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        /* Customize container */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 730px;
+            }
+        }
+        .container-narrow > hr {
+              margin: 30px 0;
+        }
+        @media screen and (min-width: 768px) {
+          /* Remove the padding we set earlier */
+          .header,
+          .footer {
+            padding-left: 0;
+            padding-right: 0;
+          }
+          /* Space out the masthead */
+          .header {
+            margin-bottom: 30px;
+          }
+          /* Remove the bottom border on the jumbotron for visual effect */
+          .jumbotron {
+            border-bottom: 0;
+          }
+        }
+    </style>
 
 </head>
 <body>
     <div id="header" class="header navbar navbar-static-top">
         <div class="navbar-inner">
-            <div class="container">
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                </button>
-                <a class="brand" href="/">Ouimeaux</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav pull-right">
-                        <li class="">
-                            <a href="/">Home</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <a class="brand" href="/">Ouimeaux</a>
         </div>
     </div>
     <div class="container page">
@@ -44,10 +64,6 @@
 
         <hr>
         <footer id="footer" class="footer">
-            <div class="footer-left">
-                <a href="/about">About</a> |
-                <a href="/">Home</a>
-            </div>
             <div class="footer-right">
                 <span>&copy; 2013 Ian McCracken</span>
             </div>
