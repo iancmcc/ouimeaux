@@ -1,35 +1,16 @@
-
-.masthead {
-	padding: 30px 0 30px;
-	margin-bottom: 0;
-}
-
-.masthead h1 {
-	font-size: 75px;
-	line-height: 1;
-	letter-spacing: -2px;
-	font-weight: bold;
+.navbar {
+    padding-left: 25px;
 }
 
 .header-section {
-	padding: 50px 0;
+	padding: 30px 30px;
 	background: #222;
 	position: absolute;
-	top: 40px;
+	top: 50px;
 	left: 0px;
 	width: 100%;
-	padding-left: 0;
 	margin-left: 0;
 	color: #FFF;
-}
-
-.header-row {
-	width: 960px;
-	margin: auto;
-}
-
-.header-push {
-	height: 250px;
 }
 
 .main {
@@ -38,14 +19,15 @@
 }
 
 .footer-left {
+    padding-left: 30px;
 	float: left;
 }
 
-.footer-right {
-	float: right;
+.btn {
+    text-align: left;
 }
 
-.flashes {
-	list-style-type: none;
-	margin-left: 0;
+.btn-icon {
+    margin-left: 15px;
+    margin-right: 15px;
 }
