@@ -74,8 +74,8 @@ class DeviceResource(Resource):
         dev = get_device(name)
         if not isinstance(dev, Switch):
             abort(405, error='Only switches can have their state changed')
-        action = request.json.get('state', request.values.get(
-            'state', 'toggle'))
+        action = (request.json or {}).get('state', (
+            request.values or {}).get('state', 'toggle'))
         if action not in ('on', 'off', 'toggle'):
             abort(400, error='{} is not a valid state'.format(action))
         getattr(dev, action)()
