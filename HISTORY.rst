@@ -2,6 +2,10 @@
 
 History
 -------
+Release 0.7 (January 27, 2014)
+++++++++++++++++++++++++++++++
+- Added REST API
+- Added Web app
 
 Release 0.6 (January 25, 2014)
 ++++++++++++++++++++++++++++++++

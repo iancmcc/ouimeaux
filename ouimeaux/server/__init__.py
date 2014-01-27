@@ -14,6 +14,8 @@ from socketio import socketio_manage
 from socketio.namespace import BaseNamespace
 from socketio.mixins import BroadcastMixin
 
+here = lambda *x: os.path.join(os.path.dirname(__file__), *x)
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -115,7 +117,7 @@ def run_socketio(**kwargs):
 # routing for basic pages (pass routing onto the Angular app)
 @app.route('/')
 def basic_pages(**kwargs):
-    return make_response(open('templates/index.html').read())
+    return make_response(open(here('templates/index.html')).read())
 
 
 # special file handlers and error handlers

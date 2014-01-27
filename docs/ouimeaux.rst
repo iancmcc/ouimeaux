@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     ouimeaux.device
+    ouimeaux.server
 
 Submodules
 ----------
