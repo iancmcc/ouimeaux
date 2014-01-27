@@ -2,6 +2,10 @@
 
 History
 -------
+Release 0.7.2 (January 28, 2014)
+++++++++++++++++++++++++++++++++
+- Fix a bug with using query parameters on /api/device
+
 Release 0.7 (January 27, 2014)
 ++++++++++++++++++++++++++++++
 - Added REST API
