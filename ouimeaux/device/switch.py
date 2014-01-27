@@ -8,6 +8,7 @@ class Switch(Device):
         Set the state of this device to on or off.
         """
         self.basicevent.SetBinaryState(BinaryState=int(state))
+        self._state = int(state)
 
     def off(self):
         """
@@ -20,6 +21,12 @@ class Switch(Device):
         Turn this device on. If already on, will return "Error".
         """
         return self.set_state(1)
+
+    def toggle(self):
+        """
+        Toggle the switch's state.
+        """
+        return self.set_state(not self.get_state())
 
     def __repr__(self):
         return '<WeMo Switch "{name}">'.format(name=self.name)

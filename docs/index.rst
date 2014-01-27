@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ouimeaux's documentation!
-======================================
+Ouimeaux: Open Source WeMo Control
+==================================
 
 Contents:
 
@@ -13,9 +13,10 @@ Contents:
 
    readme
    installation
-   usage
    wemo
+   server
    configuration
+   api
    contributing
    authors
    history

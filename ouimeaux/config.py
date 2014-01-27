@@ -47,6 +47,10 @@ aliases:
 # Whether to use a device cache (stored at ~/.wemo/cache)
 #
 # cache: true
+
+# Web app bind address
+#
+# listen: 0.0.0.0:5000
 """)
         with open(filename, 'r') as cfg:
             self._parsed = yaml.load(cfg)
@@ -62,6 +66,10 @@ aliases:
     @property
     def cache(self):
         return self._parsed.get('cache', None)
+
+    @property
+    def listen(self):
+        return self._parsed.get('listen', None)
 
 
 class Cache(object):
