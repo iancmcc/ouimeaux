@@ -19,3 +19,7 @@ A configuration file in YAML format will be created at ``~/.wemo/config.yml``::
     # 'wemo switch "Living Room Lights" on'
     #
     #    lr: Living Room Lights
+
+    # Web app bind address
+    #
+    # listen: 0.0.0.0:5000

@@ -1,0 +1,18 @@
+<div class="header-section">
+    <p ng-repeat="device in data">
+    <a role="button" 
+        class="btn btn-lg btn-block"
+        ng-disabled="device.type=='Motion'"
+        ng-click="toggleState(device)"
+        ng-class="{'btn-default': device.state==0, 'btn-success':device.state==1}">
+         <span class="btn-icon glyphicon"
+             ng-class="{
+                'glyphicon-off': device.type=='Switch' || 
+                                 device.type=='LightSwitch' ||
+                                 device.type=='Insight',
+                'glyphicon-transfer': device.type=='Motion'
+             }"></span>
+        {{device.name}}
+    </a>
+    </p>
+</div>

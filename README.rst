@@ -21,5 +21,7 @@ Features
 --------
 
 * Supports WeMo Switch, Light Switch, Insight Switch and Motion
-* Installs `wemo` command to discover and control devices in your environment
-* Provides API to discover and control devices
+* Command-line tool to discover and control devices in your environment
+* REST API to obtain information and perform actions on devices
+* Simple responsive Web app provides device control on mobile
+* Python API to interact with device at a low level

@@ -8,6 +8,8 @@ from .environment import Environment
 from .config import get_cache, in_home, WemoConfiguration
 from .utils import matcher
 
+reqlog = logging.getLogger("requests.packages.urllib3.connectionpool")
+reqlog.disabled = True
 
 NOOP = lambda *x: None
 
@@ -115,6 +117,29 @@ def clear(args):
     print "Device cache cleared."
 
 
+def server(args):
+    from socketio.server import SocketIOServer
+    from ouimeaux.server import app, initialize
+    initialize()
+    level = logging.INFO
+    if getattr(args, 'debug', False):
+        level = logging.DEBUG
+    logging.basicConfig(level=level)
+    try:
+        # TODO: Move this to configuration
+        listen = WemoConfiguration().listen or '0.0.0.0:5000'
+        try:
+            host, port = listen.split(':')
+        except Exception:
+            print "Invalid bind address configuration:", listen
+            sys.exit(1)
+        SocketIOServer((host, int(port)), app,
+                       policy_server=False,
+                       namespace="socket.io").serve_forever()
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(0)
+
+
 def wemo():
     parser = argparse.ArgumentParser()
 
@@ -153,6 +178,10 @@ def wemo():
     listparser = subparsers.add_parser("list",
                           help="List all devices found in the environment")
     listparser.set_defaults(func=list_)
+
+    serverparser = subparsers.add_parser("server",
+                          help="Run the API server and web app")
+    serverparser.set_defaults(func=server)
 
     args = parser.parse_args()
 
