@@ -94,7 +94,6 @@ class SocketNamespace(BaseNamespace):
         self.emit("send:devicestate", data)
 
     def on_statechange(self, data):
-        print data
         ENV.get(data['name']).set_state(data['state'])
 
     def on_join(self, data):
