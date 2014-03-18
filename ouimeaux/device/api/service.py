@@ -34,8 +34,10 @@ class Action(object):
         arglist = action_config.get_argumentList()
         if arglist is not None:
             for arg in arglist.get_argument():
-                # TODO: Get type instead of setting 0
-                self.args[arg.get_name()] = 0
+                name = arg.get_name()
+                if name:
+                    # TODO: Get type instead of setting 0
+                    self.args[arg.get_name()] = 0
 
     def __call__(self, **kwargs):
         arglist = '\n'.join('<{0}>{1}</{0}>'.format(arg, value)
