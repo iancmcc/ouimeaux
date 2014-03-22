@@ -56,7 +56,9 @@ class SubscriptionRegistry(object):
         gevent.spawn_later(timeout-1, self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
-        device = self._devices[environ['REMOTE_ADDR']]
+        device = self._devices.get(environ['REMOTE_ADDR'])
+        if device is None:
+            import pdb; pdb.set_trace()
         doc = cElementTree.parse(environ['wsgi.input'])
         for propnode in doc.findall('./{0}property'.format(NS)):
             for property_ in propnode.getchildren():
