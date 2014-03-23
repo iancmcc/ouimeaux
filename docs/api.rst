@@ -67,8 +67,7 @@ returns a dictionary of return values::
 
 Events
 ------
-.. warning:: This events framework is deprecated and will be removed in the 0.7
-    release. Please use the signals framework.
+.. warning:: This events framework is deprecated and will be removed prior to the 1.0 release. Please use the signals framework.
 
 By default, ouimeaux subscribes to property change events on discovered
 devices (this can be disabled by passing ``with_subscribers=False`` to the
@@ -128,6 +127,7 @@ Available signals:
          - ``sender``: The device that changed state
          - ``state``: The resulting state (0 or 1)
 
+
 See the pysignals_ documentation for further information.
 
 Example: Registering a handler for when a Light Switch switches on or off::
@@ -143,6 +143,9 @@ Example: Registering a handler for when a Light Switch switches on or off::
     def switch_toggle(device, **kwargs):
         print device, kwargs['state']
 
+    env.wait()  # Pass control to the event loop
+
+See the examples_ for a more detailed implementation.
 
 .. _pysignals: https://github.com/theojulienne/PySignals
 
@@ -176,3 +179,10 @@ constructor to disable M-SEARCH requests.
 
 You can clear the device cache either by deleting the file ``~/.wemo/cache`` 
 or by using the ``wemo clear`` command.
+
+Examples
+--------
+Detailed examples_ are included in the source demonstrating common use cases.
+Suggestions (or implementations) for more are always welcome.
+
+.. _examples: https://github.com/iancmcc/ouimeaux/tree/develop/ouimeaux/examples
