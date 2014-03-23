@@ -56,15 +56,16 @@ class SubscriptionRegistry(object):
         gevent.spawn_later(timeout-1, self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
-        device = self._devices[environ['REMOTE_ADDR']]
-        doc = cElementTree.parse(environ['wsgi.input'])
-        for propnode in doc.findall('./{0}property'.format(NS)):
-            for property_ in propnode.getchildren():
-                text = property_.text
-                if isinstance(device, Insight) and property_.tag=='BinaryState':
-                    text = text.split('|')[0]
-                subscription.send(device, type=property_.tag, value=text)
-                self._event(device, property_.tag, text)
+        device = self._devices.get(environ['REMOTE_ADDR'])
+        if device is not None:
+            doc = cElementTree.parse(environ['wsgi.input'])
+            for propnode in doc.findall('./{0}property'.format(NS)):
+                for property_ in propnode.getchildren():
+                    text = property_.text
+                    if isinstance(device, Insight) and property_.tag=='BinaryState':
+                        text = text.split('|')[0]
+                    subscription.send(device, type=property_.tag, value=text)
+                    self._event(device, property_.tag, text)
         start_response('200 OK', [
             ('Content-Type', 'text/html'), 
             ('Content-Length', len(SUCCESS)),
