@@ -18,7 +18,6 @@ log = logging.getLogger(__name__)
 NS = "{urn:schemas-upnp-org:event-1-0}"
 SUCCESS = '<html><body><h1>200 OK</h1></body></html>'
 
-
 class SubscriptionRegistry(object):
     def __init__(self):
         self._devices = {}
@@ -52,13 +51,16 @@ class SubscriptionRegistry(object):
             return self._resubscribe(url)
         timeout = int(response.headers.get('timeout', '1801').replace(
             'Second-', ''))
-        sid = response.headers.get('sid', sid) 
+        sid = response.headers.get('sid', sid)
         gevent.spawn_later(timeout-1, self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
         device = self._devices.get(environ['REMOTE_ADDR'])
         if device is not None:
-            doc = cElementTree.parse(environ['wsgi.input'])
+            data = environ['wsgi.input'].read()
+            # trim garbage from end, if any
+            data = data.split("\n\n")[0]
+            doc = cElementTree.fromstring(data)
             for propnode in doc.findall('./{0}property'.format(NS)):
                 for property_ in propnode.getchildren():
                     text = property_.text
@@ -67,7 +69,7 @@ class SubscriptionRegistry(object):
                     subscription.send(device, type=property_.tag, value=text)
                     self._event(device, property_.tag, text)
         start_response('200 OK', [
-            ('Content-Type', 'text/html'), 
+            ('Content-Type', 'text/html'),
             ('Content-Length', len(SUCCESS)),
             ('Connection', 'close')
         ])
