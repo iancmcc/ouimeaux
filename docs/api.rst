@@ -151,7 +151,10 @@ See the examples_ for a more detailed implementation.
 
 Switches
 --------
-Switches have three shortcut methods defined: ``get_state``, ``on`` and ``off``.
+Switches have three shortcut methods defined: ``get_state``, ``on`` and
+``off``. Switches also have a ``blink`` method, which accepts a number of
+seconds. This will toggle the device, wait the number of seconds, then toggle
+it again. Remember to call ``env.wait()`` to give control to the event loop.
 
 Motions
 -------
