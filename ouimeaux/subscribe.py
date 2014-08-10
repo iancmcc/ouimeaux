@@ -40,7 +40,6 @@ class SubscriptionRegistry(object):
                 "CALLBACK": '<http://%s:8989>' % host,
                 "NT": "upnp:event"
             })
-
         response = requests.request(method="SUBSCRIBE", url=url,
                                     headers=headers)
         if response.status_code == 412 and sid:
@@ -52,7 +51,7 @@ class SubscriptionRegistry(object):
         timeout = int(response.headers.get('timeout', '1801').replace(
             'Second-', ''))
         sid = response.headers.get('sid', sid)
-        gevent.spawn_later(timeout-1, self._resubscribe, url, sid)
+        gevent.spawn_later(timeout-180, self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
         device = self._devices.get(environ['REMOTE_ADDR'])
