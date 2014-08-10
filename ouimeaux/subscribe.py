@@ -3,11 +3,10 @@ import logging
 from xml.etree import cElementTree
 from functools import partial
 
-import requests
 import gevent
 from gevent.wsgi import WSGIServer
 
-from ouimeaux.utils import get_ip_address
+from ouimeaux.utils import get_ip_address, requests_request
 from ouimeaux.device.insight import Insight
 from ouimeaux.signals import subscription
 
@@ -44,12 +43,12 @@ class SubscriptionRegistry(object):
                 "CALLBACK": '<http://%s:8989>' % host,
                 "NT": "upnp:event"
             })
-        response = requests.request(method="SUBSCRIBE", url=url,
+        response = requests_request(method="SUBSCRIBE", url=url,
                                     headers=headers)
         if response.status_code == 412 and sid:
             # Invalid subscription ID. Send an UNSUBSCRIBE for safety and
             # start over.
-            requests.request(method='UNSUBSCRIBE', url=url,
+            requests_request(method='UNSUBSCRIBE', url=url,
                              headers={'SID': sid})
             return self._resubscribe(url)
         timeout = int(response.headers.get('timeout', '1801').replace(
