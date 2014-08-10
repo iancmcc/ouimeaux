@@ -1,3 +1,5 @@
+import gevent
+
 from ouimeaux.device import Device
 
 
@@ -28,6 +30,12 @@ class Switch(Device):
         """
         return self.set_state(not self.get_state())
 
+    def blink(self, delay=1):
+        """
+        Toggle the switch once, then again after a delay (in seconds).
+        """
+        self.toggle()
+        gevent.spawn_later(delay, self.toggle)
+
     def __repr__(self):
         return '<WeMo Switch "{name}">'.format(name=self.name)
-
