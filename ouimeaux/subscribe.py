@@ -5,7 +5,6 @@ from functools import partial
 
 import requests
 import gevent
-from gevent import socket
 from gevent.wsgi import WSGIServer
 
 from ouimeaux.utils import get_ip_address
@@ -51,7 +50,7 @@ class SubscriptionRegistry(object):
             # Invalid subscription ID. Send an UNSUBSCRIBE for safety and
             # start over.
             requests.request(method='UNSUBSCRIBE', url=url,
-                    headers={'SID':sid})
+                             headers={'SID': sid})
             return self._resubscribe(url)
         timeout = int(response.headers.get('timeout', '1801').replace(
             'Second-', ''))
