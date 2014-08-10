@@ -1,3 +1,4 @@
+from datetime import datetime
 from .switch import Switch
 
 class Insight(Switch):
@@ -8,69 +9,52 @@ class Insight(Switch):
     @property
     def insight_params(self):
         params = self.insight.GetInsightParams().get('InsightParams')
-['1',
- '1401624771',
- '493',
- '513',
- '161285',
- '1209600',
-
- '20',
- '19580',
- '159187',
- '49942514.000000',
- '8000']
         (
-            state,
+            state,  # 0 if off, 1 if on, 8 if on but load is off
             lastchange,
-            onfor,
-            ontoday,
-            ontotal,
-            timeperiod,
-            x,
+            onfor,  # seconds
+            ontoday,  # seconds
+            ontotal,  # seconds
+            timeperiod,  # The period over which averages are calculated
+            _x,  # This one is always 19 for me; what is it?
             currentmw,
-            z,
-            j,
+            todaymw,
+            totalmw,
             powerthreshold
-
-
-        )
-        state, lastchange, onfor, ontoday, ontotal, twoweeks, todaymw, totalmw, u3 = params.split('|')
-        return {
-                'state': state,
+        ) = params.split('|')
+        return {'state': state,
                 'lastchange': datetime.fromtimestamp(int(lastchange)),
-                'onfor': int(laston),
+                'onfor': int(onfor),
                 'ontoday': int(ontoday),
-                'ontotal': int(total),
-                'todaymw': todaymw,
-                'totalmw': totalmw,
-                'currentpower': u2
-                }
+                'ontotal': int(ontotal),
+                'todaymw': int(float(todaymw)),
+                'totalmw': int(float(totalmw)),
+                'currentpower': int(float(currentmw))}
 
     @property
     def today_kwh(self):
-        return self.insight.GetTodayKWH()
+        return self.insight_params['todaymw'] * 1.6666667e-8
 
     @property
     def current_power(self):
         """
         Returns the current power usage in mW.
         """
-        return self.insight.GetPower()
+        return self.insight_params['currentpower']
 
     @property
     def today_on_time(self):
-        return self.insight.GetTodayONTime()
+        return self.insight_params['ontoday']
 
     @property
     def on_for(self):
-        return self.insight.GetONFor()
+        return self.insight_params['onfor']
 
     @property
-    def in_standby_since(self):
-        return self.insight.GetInSBYSince()
+    def last_change(self):
+        return self.insight_params['lastchange']
 
     @property
     def today_standby_time(self):
-        return self.insight.GetTodaySBYTime()
+        return self.insight_params['ontoday']
 
