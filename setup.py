@@ -22,7 +22,7 @@ requirements = [x.strip() for x in open(here('requirements.txt')).readlines()]
 
 setup(
     name='ouimeaux',
-    version='0.7.2',
+    version='0.7.3',
     description='Open source control for Belkin WeMo devices',
     long_description=readme + '\n\n' + history,
     author='Ian McCracken',

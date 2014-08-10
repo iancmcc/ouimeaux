@@ -5,7 +5,6 @@ from functools import partial
 
 import requests
 import gevent
-from gevent import socket
 from gevent.wsgi import WSGIServer
 
 from ouimeaux.utils import get_ip_address
@@ -18,14 +17,19 @@ log = logging.getLogger(__name__)
 NS = "{urn:schemas-upnp-org:event-1-0}"
 SUCCESS = '<html><body><h1>200 OK</h1></body></html>'
 
+
 class SubscriptionRegistry(object):
     def __init__(self):
         self._devices = {}
         self._callbacks = defaultdict(list)
 
     def register(self, device):
-        log.info("Subscribing to basic events from %r", (device,))
-        # Provide a function to register a callback when the device changes state
+        if not device:
+            log.error("Received an invalid device: %r", device)
+            return
+        log.info("Subscribing to basic events from %r", device)
+        # Provide a function to register a callback when the device changes
+        # state
         device.register_listener = partial(self.on, device, 'BinaryState')
         self._devices[device.host] = device
         self._resubscribe(device.basicevent.eventSubURL)
@@ -40,19 +44,18 @@ class SubscriptionRegistry(object):
                 "CALLBACK": '<http://%s:8989>' % host,
                 "NT": "upnp:event"
             })
-
         response = requests.request(method="SUBSCRIBE", url=url,
                                     headers=headers)
         if response.status_code == 412 and sid:
             # Invalid subscription ID. Send an UNSUBSCRIBE for safety and
             # start over.
             requests.request(method='UNSUBSCRIBE', url=url,
-                    headers={'SID':sid})
+                             headers={'SID': sid})
             return self._resubscribe(url)
         timeout = int(response.headers.get('timeout', '1801').replace(
             'Second-', ''))
         sid = response.headers.get('sid', sid)
-        gevent.spawn_later(timeout-1, self._resubscribe, url, sid)
+        gevent.spawn_later(int(timeout * 0.75), self._resubscribe, url, sid)
 
     def _handle(self, environ, start_response):
         device = self._devices.get(environ['REMOTE_ADDR'])

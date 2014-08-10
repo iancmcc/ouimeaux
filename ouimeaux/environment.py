@@ -117,11 +117,9 @@ class Environment(object):
             except StopBroadcasting:
                 return
 
-
     def _found_device(self, sender, **kwargs):
         address = kwargs['address']
         headers = kwargs['headers']
-        log.info("Found device at %s" % (address,))
         usn = headers['usn']
         if usn.startswith('uuid:Socket'):
             klass = Switch
@@ -135,6 +133,7 @@ class Environment(object):
             log.info("Unrecognized device type. USN={0}".format(usn))
             return
         device = klass(headers['location'])
+        log.info("Found device %r at %s" % (device, address))
         self._process_device(device)
 
     def _process_device(self, device, cache=None):
