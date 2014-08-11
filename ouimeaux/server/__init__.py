@@ -76,9 +76,14 @@ class DeviceResource(Resource):
             abort(405, error='Only switches can have their state changed')
         action = (request.json or {}).get('state', (
             request.values or {}).get('state', 'toggle'))
-        if action not in ('on', 'off', 'toggle'):
+        if action not in ('on', 'off', 'toggle', 'blink'):
             abort(400, error='{} is not a valid state'.format(action))
-        getattr(dev, action)()
+        if action == 'blink':
+            delay = (request.json or {}).get('delay', (
+                request.values or {}).get('delay', '1'))
+            getattr(dev, action)(delay=int(delay))
+        else:
+            getattr(dev, action)()
         return serialize(dev)
 
 
