@@ -141,6 +141,9 @@ def server(args):
 
 
 def wemo():
+    import ouimeaux.utils
+    ouimeaux.utils._RETRIES = 0
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-b", "--bind", default=None,

@@ -9,6 +9,7 @@ from ..utils import requests_get
 log = logging.getLogger(__name__)
 
 
+class DeviceUnreachable(Exception): pass
 class UnknownService(Exception): pass
 
 
@@ -54,6 +55,12 @@ class Device(object):
 
     def list_services(self):
         return self.services.keys()
+
+    def ping(self):
+        try:
+            self.get_state()
+        except Exception:
+            raise DeviceUnreachable(self)
 
     def explain(self):
         for name, svc in self.services.iteritems():

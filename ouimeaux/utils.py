@@ -56,28 +56,35 @@ def matcher(match_string):
     return matches
 
 
-def retry_with_delay(f, retries=10, delay=60):
+# This is pretty arbitrary. I'm choosing, for no real reason, the length of
+# a subscription.
+_RETRIES = 1801/60
+
+
+def get_retries():
+    return _RETRIES
+
+
+def retry_with_delay(f, delay=60):
     """
     Retry the wrapped requests.request function in case of ConnectionError.
     Optionally limit the number of retries or set the delay between retries.
     """
     @wraps(f)
     def inner(*args, **kwargs):
-        remaining = retries
+        kwargs['timeout'] = 1
+        remaining = get_retries() + 1
         while remaining:
+            remaining -= 1
             try:
                 return f(*args, **kwargs)
             except requests.ConnectionError:
                 if not remaining:
                     raise
-                remaining -= 1
                 gevent.sleep(delay)
     return inner
 
 
-# This is pretty arbitrary. I'm choosing, for no real reason, the length of
-# a subscription.
-_RETRIES = 1801/60
-requests_get = retry_with_delay(requests.get, retries=_RETRIES)
-requests_post = retry_with_delay(requests.post, retries=_RETRIES)
-requests_request = retry_with_delay(requests.request, retries=_RETRIES)
+requests_get = retry_with_delay(requests.get)
+requests_post = retry_with_delay(requests.post)
+requests_request = retry_with_delay(requests.request)

@@ -80,10 +80,20 @@ class Cache(object):
     def empty(self):
         return not self._shelf.get('devices')
 
+    def clear(self):
+        self._shelf.clear()
+
     def add_device(self, device):
         assert isinstance(device, Device)
         d = self._shelf.setdefault('devices', {})
         d[device.name] = device
+
+    def invalidate(self, device):
+        assert isinstance(device, Device)
+        d = self._shelf.setdefault('devices', {})
+        d.pop(device.name)
+        self._shelf.clear()
+        self._shelf['devices'] = d
 
     @property
     def devices(self):
