@@ -2,6 +2,14 @@
 
 History
 -------
+
+Release 0.7.3 (August 10, 2014)
+++++++++++++++++++++++++++++++++
+- Fixed #18: Error when run as root
+- Fixed #26: Evict devices from cache when unreachable
+- Fixed #29: GetPower stopped working for Insight devices
+- Fixed #31: Add on-then-off
+
 Release 0.7.2 (January 28, 2014)
 ++++++++++++++++++++++++++++++++
 - Fix a bug with using query parameters on /api/device
