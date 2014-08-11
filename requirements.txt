@@ -1,5 +1,5 @@
 gevent >= 1.0
-requests
+requests >= 2.3.0
 pyyaml
 pysignals
 flask-restful

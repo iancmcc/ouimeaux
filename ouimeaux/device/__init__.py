@@ -1,15 +1,15 @@
 import logging
 from urlparse import urlparse
 
-import requests
-
 from .api.service import Service
 from .api.xsd import device as deviceParser
+from ..utils import requests_get
 
 
 log = logging.getLogger(__name__)
 
 
+class DeviceUnreachable(Exception): pass
 class UnknownService(Exception): pass
 
 
@@ -19,7 +19,7 @@ class Device(object):
         base_url = url.rsplit('/', 1)[0]
         self.host = urlparse(url).hostname
         #self.port = urlparse(url).port
-        xml = requests.get(url)
+        xml = requests_get(url)
         self._config = deviceParser.parseString(xml.content).device
         sl = self._config.serviceList
         self.services = {}
@@ -55,6 +55,12 @@ class Device(object):
 
     def list_services(self):
         return self.services.keys()
+
+    def ping(self):
+        try:
+            self.get_state()
+        except Exception:
+            raise DeviceUnreachable(self)
 
     def explain(self):
         for name, svc in self.services.iteritems():

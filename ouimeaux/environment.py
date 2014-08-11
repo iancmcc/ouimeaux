@@ -1,8 +1,10 @@
 import logging
 
 import gevent
+import requests
 
 from ouimeaux.config import get_cache, WemoConfiguration
+from ouimeaux.device import DeviceUnreachable
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
 from ouimeaux.device.lightswitch import LightSwitch
@@ -117,11 +119,9 @@ class Environment(object):
             except StopBroadcasting:
                 return
 
-
     def _found_device(self, sender, **kwargs):
         address = kwargs['address']
         headers = kwargs['headers']
-        log.info("Found device at %s" % (address,))
         usn = headers['usn']
         if usn.startswith('uuid:Socket'):
             klass = Switch
@@ -135,6 +135,7 @@ class Environment(object):
             log.info("Unrecognized device type. USN={0}".format(usn))
             return
         device = klass(headers['location'])
+        log.info("Found device %r at %s" % (device, address))
         self._process_device(device)
 
     def _process_device(self, device, cache=None):
@@ -152,9 +153,14 @@ class Environment(object):
             self.registry.register(device)
             self.registry.on(device, 'BinaryState',
                              device._update_state)
-        if cache if cache is not None else self._with_cache:
-            with get_cache() as c:
-                c.add_device(device)
+        with get_cache() as c:
+            try:
+                device.ping()
+            except DeviceUnreachable:
+                return
+            else:
+                if cache if cache is not None else self._with_cache:
+                    c.add_device(device)
         devicefound.send(device)
         callback(device)
 

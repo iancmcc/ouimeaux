@@ -1,7 +1,11 @@
-import time
+from functools import wraps
+import re
 import socket
 import struct
-import re
+import time
+
+import gevent
+import requests
 
 
 def tz_hours():
@@ -51,3 +55,36 @@ def matcher(match_string):
         return pattern.search(s.lower()) is not None
     return matches
 
+
+# This is pretty arbitrary. I'm choosing, for no real reason, the length of
+# a subscription.
+_RETRIES = 1801/60
+
+
+def get_retries():
+    return _RETRIES
+
+
+def retry_with_delay(f, delay=60):
+    """
+    Retry the wrapped requests.request function in case of ConnectionError.
+    Optionally limit the number of retries or set the delay between retries.
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        kwargs['timeout'] = 1
+        remaining = get_retries() + 1
+        while remaining:
+            remaining -= 1
+            try:
+                return f(*args, **kwargs)
+            except requests.ConnectionError:
+                if not remaining:
+                    raise
+                gevent.sleep(delay)
+    return inner
+
+
+requests_get = retry_with_delay(requests.get)
+requests_post = retry_with_delay(requests.post)
+requests_request = retry_with_delay(requests.request)
