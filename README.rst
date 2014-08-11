@@ -5,7 +5,7 @@ ouimeaux
 .. image:: https://badge.fury.io/py/ouimeaux.png
     :target: http://badge.fury.io/py/ouimeaux
     
-.. image:: https://travis-ci.org/iancmcc/ouimeaux.png?branch=develop
+.. image:: https://travis-ci.org/iancmcc/ouimeaux.png?branch=master
         :target: https://travis-ci.org/iancmcc/ouimeaux
 
 .. image:: https://pypip.in/d/ouimeaux/badge.png
