@@ -78,7 +78,7 @@ def retry_with_delay(f, delay=60):
             remaining -= 1
             try:
                 return f(*args, **kwargs)
-            except requests.ConnectionError:
+            except (requests.ConnectionError, requests.Timeout):
                 if not remaining:
                     raise
                 gevent.sleep(delay)
