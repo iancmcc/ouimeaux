@@ -58,3 +58,10 @@ class Insight(Switch):
     def today_standby_time(self):
         return self.insight_params['ontoday']
 
+    @property
+    def ontotal(self):
+        return self.insight_params['ontotal']
+
+    @property
+    def totalmw(self):
+        return self.insight_params['totalmw']
