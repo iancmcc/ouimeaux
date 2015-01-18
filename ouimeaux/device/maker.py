@@ -10,24 +10,26 @@ class Maker(Switch):
 
     @property
     def maker_attribs(self):
-        makerresp = self.deviceevent.GetAttributes().get('attributeList')
+		makeresp = self.deviceevent.GetAttributes().get('attributeList')
         makerresp = "<attributes>" + makerresp + "</attributes>"
         makerresp = makerresp.replace("&gt;",">")
         makerresp = makerresp.replace("&lt;","<")
         attributes = et.fromstring(makerresp)
         for attribute in attributes:
-            if attribute[0].text == "Switch":
+            print attribute[0].text, attribute[1].text
+            if attribute[0] == 'Switch':
             	state = attribute[1].text
-            elif attribute[0].text == "Sensor":
+            elif attribute[0] == 'Sensor':
             	sensorstate = attribute[1].text
-            elif attribute[0].text == "SwitchMode":
+            elif attribute[0] == 'SwitchMode':
             	switchmode = attribute[1].text
-            elif attribute[0].text == "SensorPresent":
-            	hassensor = attribute[1].text
+            elif attribute[0] == 'SensorPresent':
+            	hassensor == attribute[1].text
         return { 'state' : state,
-        		 'sensorstate' : int(sensorstate),
+        		 'sensor' : int(sensorstate),
         		 'switchmode' : int(switchmode),
         		 'hassensor' : int(hassensor)}
+
 
     @property
     def sensor_state(self):
