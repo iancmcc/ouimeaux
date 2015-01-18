@@ -7,6 +7,7 @@ from ouimeaux.config import get_cache, WemoConfiguration
 from ouimeaux.device import DeviceUnreachable
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
+from ouimeaux.device.maker import Maker
 from ouimeaux.device.lightswitch import LightSwitch
 from ouimeaux.device.motion import Motion
 from ouimeaux.discovery import UPnP
@@ -131,6 +132,8 @@ class Environment(object):
             klass = Insight
         elif usn.startswith('uuid:Sensor'):
             klass = Motion
+        elif usn.startswith('uuid:Maker'):
+        	klass = Maker
         else:
             log.info("Unrecognized device type. USN={0}".format(usn))
             return
