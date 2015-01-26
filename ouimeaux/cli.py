@@ -22,9 +22,9 @@ def _state(device, readable=False):
         return state
 
 
-def scan(args, on_switch=NOOP, on_motion=NOOP):
+def scan(args, on_switch=NOOP, on_motion=NOOP, on_bridge=NOOP):
     try:
-        env = Environment(on_switch, on_motion, with_subscribers=False,
+        env = Environment(on_switch, on_motion, on_bridge, with_subscribers=False,
                           bind=args.bind, with_cache=args.use_cache)
         env.start()
         with get_cache() as c:
@@ -83,6 +83,66 @@ Usage: wemo switch NAME (on|off|toggle|status)"""
     print "No device found with that name."
     sys.exit(1)
 
+def light(args):
+    if args.state.lower() in ("on", "1", "true"):
+        state = "on"
+    elif args.state.lower() in ("off", "0", "false"):
+        state = "off"
+    elif args.state.lower() == "toggle":
+        state = "toggle"
+    elif args.state.lower() == "status":
+        state = "status"
+    else:
+        print """No valid action specified. 
+Usage: wemo light NAME (on|off|toggle|status)"""
+        sys.exit(1)
+
+    device_name = args.device
+    alias = WemoConfiguration().aliases.get(device_name)
+    if alias:
+        matches = lambda x:x == alias
+    elif device_name:
+        matches = matcher(device_name)
+    else:
+        matches = NOOP
+
+    def on_switch(switch):
+        pass
+
+    def on_motion(motion):
+        pass
+
+    def on_bridge(bridge):
+        bridge.bridge_get_lights()
+        for light in bridge.Lights:
+            if matches(light):
+                if args.state == "toggle":
+                    found_state = bridge.light_get_state(bridge.Lights[light]).get('state')
+                    bridge.light_set_state(bridge.Lights[light], state=not found_state)
+                elif args.state == "status":
+                    print bridge.light_get_state(bridge.Lights[light])
+                else:
+                    if args.dim == None and args.state == "on":
+                        dim = bridge.light_get_state(bridge.Lights[light]).get('dim')
+                        state = 1
+                    elif args.state == "off":
+                        dim = None
+                        state = 0
+                    elif args.dim <= 255 and args.dim >= 0:
+                        dim = args.dim
+                        state = 1
+                    else:
+                        print """Invalid dim specified. 
+Dim must be between 0 and 255"""
+                        sys.exit(1)
+                    bridge.light_set_state(bridge.Lights[light],state=state,dim=dim)
+                sys.exit(0)
+
+    scan(args, on_switch, on_motion, on_bridge)
+    # If we got here, we didn't find anything
+    print "No device found with that name."
+    sys.exit(1)
+
 
 def list_(args):
 
@@ -92,7 +152,13 @@ def list_(args):
     def on_motion(motion):
         print "Motion:", motion.name
 
-    scan(args, on_switch, on_motion)
+    def on_bridge(bridge):
+        print "Bridge:", bridge.name
+        bridge.bridge_get_lights()
+        for light in bridge.Lights:
+            print "Light:", light
+
+    scan(args, on_switch, on_motion, on_bridge)
 
 
 def status(args):
@@ -103,7 +169,13 @@ def status(args):
     def on_motion(motion):
         print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
 
-    scan(args, on_switch, on_motion)
+    def on_bridge(bridge):
+        print "Bridge:", bridge.name, '\t', _state(bridge, args.human_readable)
+        bridge.bridge_get_lights()
+        for light in bridge.Lights:
+            print "Light:", light, '\t', bridge.light_get_state(bridge.Lights[light])
+
+    scan(args, on_switch, on_motion, on_bridge)
 
 
 def clear(args):
@@ -175,8 +247,16 @@ def wemo():
     stateparser = subparsers.add_parser("switch",
                                         help="Turn a WeMo Switch on or off")
     stateparser.add_argument("device", help="Name or alias of the device")
-    stateparser.add_argument("state", help="'on' or 'off")
+    stateparser.add_argument("state", help="'on' or 'off'")
     stateparser.set_defaults(func=switch)
+
+    stateparser = subparsers.add_parser("light",
+                                        help="Turn a WeMo LED light on or off")
+    stateparser.add_argument("device", help="Name or alias of the device")
+    stateparser.add_argument("state", help="'on' or 'off'")
+    stateparser.add_argument("dim", nargs='?', type=int,
+                        help="Dim value 0 to 255")
+    stateparser.set_defaults(func=light)
 
     listparser = subparsers.add_parser("list",
                           help="List all devices found in the environment")
