@@ -1,4 +1,4 @@
-from collections import defaultdict
+\from collections import defaultdict
 import logging
 from xml.etree import cElementTree
 from functools import partial
