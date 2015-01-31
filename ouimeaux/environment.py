@@ -33,7 +33,7 @@ class UnknownDevice(Exception):
 
 
 class Environment(object):
-    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, maker_callback=_NOOP, 
+    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP,
                  with_discovery=True, with_subscribers=True, with_cache=None,
                  bind=None, config_filename=None):
         """
@@ -62,10 +62,8 @@ class Environment(object):
         self._with_subscribers = with_subscribers
         self._switch_callback = switch_callback
         self._motion_callback = motion_callback
-        self._maker_callback = maker_callback
         self._switches = {}
         self._motions = {}
-        self._makers = {}
         self.devices = {}
 
     def __iter__(self):
@@ -150,9 +148,6 @@ class Environment(object):
         elif isinstance(device, Motion):
             callback = self._motion_callback
             registry = self._motions
-        if isinstance(device, Maker):
-        	callback = self._maker_callback
-        	registry = self._makers
         else:
             return
         self.devices[device.name] = device
@@ -183,12 +178,6 @@ class Environment(object):
         List motions discovered in the environment.
         """
         return self._motions.keys()
-        
-    def list_makers(self):
-    	        """
-        List makers discovered in the environment.
-        """
-        return self._makers.keys()
 
     def get(self, name):
         alias = self._config.aliases.get(name)
@@ -219,15 +208,6 @@ class Environment(object):
         """
         try:
             return self._motions[name]
-        except KeyError:
-            raise UnknownDevice(name)
-
-    def get_maker(self, name):
-        """
-        Get a maker by name.
-        """
-        try:
-            return self._makers[name]
         except KeyError:
             raise UnknownDevice(name)
 

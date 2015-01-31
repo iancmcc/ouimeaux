@@ -22,9 +22,9 @@ def _state(device, readable=False):
         return state
 
 
-def scan(args, on_switch=NOOP, on_motion=NOOP, on_maker=NOOP):
+def scan(args, on_switch=NOOP, on_motion=NOOP):
     try:
-        env = Environment(on_switch, on_motion, on_maker, with_subscribers=False,
+        env = Environment(on_switch, on_motion, with_subscribers=False,
                           bind=args.bind, with_cache=args.use_cache)
         env.start()
         with get_cache() as c:
@@ -91,11 +91,8 @@ def list_(args):
 
     def on_motion(motion):
         print "Motion:", motion.name
-        
-    def on_maker(maker):
-        print "Maker:", maker.name
 
-    scan(args, on_switch, on_motion, on_maker)
+    scan(args, on_switch, on_motion)
 
 
 def status(args):
@@ -105,11 +102,8 @@ def status(args):
 
     def on_motion(motion):
         print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
-        
-    def on_maker(maker):
-        print "Maker:", maker.name, '\t', _state(maker, args.human_readable)
 
-    scan(args, on_switch, on_motion, on_maker)
+    scan(args, on_switch, on_motion)
 
 
 def clear(args):
