@@ -159,7 +159,11 @@ class Environment(object):
         registry[device.name] = device
         if self._with_subscribers:
             self.registry.register(device)
-            self.registry.on(device, 'BinaryState',
+            if isinstance(device, Maker):
+            	self.registry.on(device, 'sensorstate', 
+            	             device._update_state)
+            else:	
+                self.registry.on(device, 'BinaryState',
                              device._update_state)
         try:
             device.ping()

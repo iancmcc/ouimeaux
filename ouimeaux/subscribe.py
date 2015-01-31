@@ -8,6 +8,7 @@ from gevent.wsgi import WSGIServer
 
 from ouimeaux.utils import get_ip_address, requests_request
 from ouimeaux.device.insight import Insight
+from ouimeaux.device.maker import Maker
 from ouimeaux.signals import subscription
 
 
@@ -29,7 +30,10 @@ class SubscriptionRegistry(object):
         log.info("Subscribing to basic events from %r", device)
         # Provide a function to register a callback when the device changes
         # state
-        device.register_listener = partial(self.on, device, 'BinaryState')
+        if isinstance(device, Maker):
+            device.register_listener = partial(self.on, device, 'sensorstate')
+        else:
+            device.register_listener = partial(self.on, device, 'BinaryState')
         self._devices[device.host] = device
         self._resubscribe(device.basicevent.eventSubURL)
 
