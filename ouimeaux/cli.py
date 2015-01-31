@@ -108,7 +108,8 @@ def status(args):
         
     def on_maker(maker):
         print "Maker:", maker.name, '\t', "Switch State:", _state(maker, args.human_readable)
-        print '\t', "Sensor State:", maker.sensorstate
+        if maker.has_sensor:
+             print '\t', '\t', '\t', "Sensor:", maker.sensor_state
 
     scan(args, on_switch, on_motion, on_maker)
 
