@@ -144,15 +144,15 @@ class Environment(object):
         self._process_device(device)
 
     def _process_device(self, device, cache=None):
-        if isinstance(device, Switch):
+        if isinstance(device, Maker):
+            callback = self._maker_callback
+            registry = self._makers
+        elif isinstance(device, Switch):
             callback = self._switch_callback
             registry = self._switches
         elif isinstance(device, Motion):
             callback = self._motion_callback
             registry = self._motions
-        elif isinstance(device, Maker):
-        	callback = self._maker_callback
-        	registry = self._makers
         else:
             return
         self.devices[device.name] = device
