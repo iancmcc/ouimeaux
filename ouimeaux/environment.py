@@ -150,7 +150,7 @@ class Environment(object):
         elif isinstance(device, Motion):
             callback = self._motion_callback
             registry = self._motions
-        if isinstance(device, Maker):
+        elif isinstance(device, Maker):
         	callback = self._maker_callback
         	registry = self._makers
         else:
