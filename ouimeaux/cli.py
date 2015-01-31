@@ -107,7 +107,8 @@ def status(args):
         print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
         
     def on_maker(maker):
-        print "Maker:", maker.name, '\t', _state(maker, args.human_readable)
+        print "Maker:", maker.name, '\t', "Switch State:", _state(maker, args.human_readable)
+        print '\t', "Sensor State:", maker.sensorstate
 
     scan(args, on_switch, on_motion, on_maker)
 
