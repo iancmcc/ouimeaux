@@ -83,6 +83,55 @@ Usage: wemo switch NAME (on|off|toggle|status)"""
     print "No device found with that name."
     sys.exit(1)
 
+def maker(args):
+    if args.state.lower() in ("on", "1", "true"):
+        state = "on"
+    elif args.state.lower() in ("off", "0", "false"):
+        state = "off"
+    elif args.state.lower() == "toggle":
+        state = "toggle"
+    elif args.state.lower() == "sensor":
+        state = "sensor"
+    else:
+        print """No valid action specified. 
+Usage: wemo maker NAME (on|off|toggle|sensor)"""
+        sys.exit(1)
+
+    device_name = args.device
+    alias = WemoConfiguration().aliases.get(device_name)
+    if alias:
+        matches = lambda x:x == alias
+    elif device_name:
+        matches = matcher(device_name)
+    else:
+        matches = NOOP
+
+    def on_maker(maker):
+        if matches(maker.name):
+            if state == "toggle":
+                found_state = maker.get_state(force_update=True)
+                maker.set_state(not found_state)
+            elif state == "sensor":
+                if maker.has_sensor:
+                     if args.human_readable:
+                          if maker.sensor_state:
+                               sensorstate = 'Sensor not triggered'
+                          else:
+                               sensorstate = 'Sensor triggered'
+                          print sensorstate
+                     else:
+                          print maker.sensor_state
+                else:
+                     print "Sensor not present"
+            else:
+                getattr(maker, state)()
+            sys.exit(0)
+
+    scan(args, on_maker)
+    # If we got here, we didn't find anything
+    print "No device found with that name."
+    sys.exit(1)
+
 
 def list_(args):
 
@@ -114,9 +163,9 @@ def status(args):
         if maker.has_sensor:
              if args.human_readable:
                   if maker.sensor_state:
-                       sensorstate = 'On'
+                       sensorstate = 'Sensor not triggered'
                   else:
-                       sensorstate = 'Off'
+                       sensorstate = 'Sensor triggered'
                   print '\t\t\t', "Sensor:", sensorstate
              else:
                   print '\t\t\t', "Sensor:", maker.sensor_state
@@ -197,6 +246,13 @@ def wemo():
     stateparser.add_argument("device", help="Name or alias of the device")
     stateparser.add_argument("state", help="'on' or 'off")
     stateparser.set_defaults(func=switch)
+    
+    makerparser = subparser.add_parser("maker", 
+                                       help="Get sensor state of a Maker or Turn on or off")
+    makerparser.add_argument("device", help="Name or alias of the device")
+    makerparser.add_argument("sensor", help="Return the sensor state")
+    makerparser.add_argument("state", help="'on' or 'off' or 'toggle'")
+    makerparser.set_defaults(func=maker)
 
     listparser = subparsers.add_parser("list",
                           help="List all devices found in the environment")
