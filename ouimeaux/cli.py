@@ -107,10 +107,21 @@ def status(args):
         print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
         
     def on_maker(maker):
-        print maker.switch_mode
-        print "Maker:", maker.name, '\t', "State:", state(maker, args.human_readable)
+        if maker.switch_mode:
+             print "Maker:", maker.name, '\t', "Momentary State:", _state(maker, args.human_readable) 
+        else:
+             print "Maker:", maker.name, '\t', "Persistent State:", _state(maker, args.human_readable)
         if maker.has_sensor:
-             print '\t', '\t', '\t', "Sensor:", maker.sensor_state
+             if args.human_readable:
+                  if maker.sensor_state:
+                       sensorstate = 'On'
+                  else:
+                       sensorstate = 'Off'
+                  print '\t\t\t', "Sensor:", sensorstate
+             else:
+                  print '\t\t\t', "Sensor:", maker.sensor_state
+        else:
+             print '\t\t\t' "Sensor not present"
 
     scan(args, on_switch, on_motion, on_maker)
 
