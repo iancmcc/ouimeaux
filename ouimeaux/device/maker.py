@@ -1,9 +1,10 @@
 from datetime import datetime
 from .switch import Switch
+from ouimeaux.device import Device
 from xml.etree import cElementTree as et
 
 
-class Maker(Switch):
+class Maker(Device):
 
     def __repr__(self):
         return '<WeMo Maker "{name}">'.format(name=self.name)

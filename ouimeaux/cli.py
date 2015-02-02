@@ -126,7 +126,7 @@ Usage: wemo maker NAME (on|off|toggle|sensor)"""
             else:
                 getattr(maker, state)()
             sys.exit(0)
-
+            
     scan(args, on_maker)
     # If we got here, we didn't find anything
     print "No device found with that name."
@@ -250,8 +250,7 @@ def wemo():
     makerparser = subparser.add_parser("maker", 
                                        help="Get sensor state of a Maker or Turn on or off")
     makerparser.add_argument("device", help="Name or alias of the device")
-    makerparser.add_argument("sensor", help="Return the sensor state")
-    makerparser.add_argument("state", help="'on' or 'off' or 'toggle'")
+    makerparser.add_argument("state", help="'on' or 'off' or 'toggle' or 'sensor'")
     makerparser.set_defaults(func=maker)
 
     listparser = subparsers.add_parser("list",
