@@ -247,7 +247,7 @@ def wemo():
     stateparser.add_argument("state", help="'on' or 'off")
     stateparser.set_defaults(func=switch)
     
-    makerparser = subparser.add_parser("maker", 
+    makerparser = subparsers.add_parser("maker", 
                                        help="Get sensor state of a Maker or Turn on or off")
     makerparser.add_argument("device", help="Name or alias of the device")
     makerparser.add_argument("state", help="'on' or 'off' or 'toggle' or 'sensor'")
