@@ -7,6 +7,25 @@ class Maker(Device):
 
     def __repr__(self):
         return '<WeMo Maker "{name}">'.format(name=self.name)
+        
+    def set_state(self, state):
+        """
+        Set the state of this device to on or off.
+        """
+        self.basicevent.SetBinaryState(BinaryState=int(state))
+        self._state = int(state)
+
+    def off(self):
+        """
+        Turn this device off. If already off, will return "Error".
+        """
+        return self.set_state(0)
+
+    def on(self):
+        """
+        Turn this device on. If already on, will return "Error".
+        """
+        return self.set_state(1)
 
     @property
     def maker_attribs(self):
@@ -16,16 +35,13 @@ class Maker(Device):
         makerresp = makerresp.replace("&lt;","<")
         attributes = et.fromstring(makerresp)
         for attribute in attributes:
-            if attribute[0].text == "Switch":
-            	state = attribute[1].text
             elif attribute[0].text == "Sensor":
             	sensorstate = attribute[1].text
             elif attribute[0].text == "SwitchMode":
             	switchmode = attribute[1].text
             elif attribute[0].text == "SensorPresent":
             	hassensor = attribute[1].text
-        return { 'state' : state,
-        		 'sensorstate' : int(sensorstate),
+        return { 'sensorstate' : int(sensorstate),
         		 'switchmode' : int(switchmode),
         		 'hassensor' : int(hassensor)}
 
