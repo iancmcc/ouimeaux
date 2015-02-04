@@ -8,6 +8,7 @@ from gevent.wsgi import WSGIServer
 
 from ouimeaux.utils import get_ip_address, requests_request
 from ouimeaux.device.insight import Insight
+from ouimeaux.device.maker import Maker
 from ouimeaux.signals import subscription
 
 
