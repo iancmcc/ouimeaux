@@ -92,9 +92,11 @@ def maker(args):
         state = "toggle"
     elif args.state.lower() == "sensor":
         state = "sensor"
+    elif args.state.lower() == "switch":
+        state = "switch"
     else:
         print """No valid action specified. 
-Usage: wemo maker NAME (on|off|toggle|sensor)"""
+Usage: wemo maker NAME (on|off|toggle|sensor|switch)"""
         sys.exit(1)
 
     device_name = args.device
@@ -129,6 +131,11 @@ Usage: wemo maker NAME (on|off|toggle|sensor)"""
                           print maker.sensor_state
                 else:
                      print "Sensor not present"
+            elif state == "switch":
+                 if maker.switch_mode:
+                      print "Momentary Switch" 
+                 else:
+                      print _state(maker, args.human_readable)
             else:
                 getattr(maker, state)()
             sys.exit(0)
@@ -254,9 +261,9 @@ def wemo():
     stateparser.set_defaults(func=switch)
     
     makerparser = subparsers.add_parser("maker", 
-                                       help="Get sensor state of a Maker or Turn on or off")
+                                       help="Get sensor or switch state of a Maker or Turn on or off")
     makerparser.add_argument("device", help="Name or alias of the device")
-    makerparser.add_argument("state", help="'on' or 'off' or 'toggle' or 'sensor'")
+    makerparser.add_argument("state", help="'on' or 'off' or 'toggle' or 'sensor' or 'switch'")
     makerparser.set_defaults(func=maker)
 
     listparser = subparsers.add_parser("list",

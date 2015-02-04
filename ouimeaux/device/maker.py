@@ -35,7 +35,7 @@ class Maker(Device):
         makerresp = makerresp.replace("&lt;","<")
         attributes = et.fromstring(makerresp)
         for attribute in attributes:
-            elif attribute[0].text == "Sensor":
+            if attribute[0].text == "Sensor":
             	sensorstate = attribute[1].text
             elif attribute[0].text == "SwitchMode":
             	switchmode = attribute[1].text
