@@ -30,10 +30,7 @@ class SubscriptionRegistry(object):
         log.info("Subscribing to basic events from %r", device)
         # Provide a function to register a callback when the device changes
         # state
-        if isinstance(device, Maker):
-            device.register_listener = partial(self.on, device, 'sensorstate')
-        else:
-            device.register_listener = partial(self.on, device, 'BinaryState')
+        device.register_listener = partial(self.on, device, 'BinaryState')
         self._devices[device.host] = device
         self._resubscribe(device.basicevent.eventSubURL)
 

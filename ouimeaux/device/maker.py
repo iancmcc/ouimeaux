@@ -1,5 +1,4 @@
 from datetime import datetime
-from .switch import Switch
 from ouimeaux.device import Device
 from xml.etree import cElementTree as et
 
