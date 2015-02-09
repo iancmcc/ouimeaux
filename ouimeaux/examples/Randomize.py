@@ -1,7 +1,7 @@
 
 import random
-#import datetime
-#import time
+import datetime
+import time
 import ouimeaux
 from ouimeaux.environment import Environment
 
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     print ""
     print "WeMo Randomizer"
     print "---------------"
-    env = Environment(with_cache=False)
+    env = Environment()
     # TODO: run from 10am to 10pm
     try:
         env.start()
@@ -26,5 +26,10 @@ if __name__ == "__main__":
             env.wait(90)
         
     except (KeyboardInterrupt, SystemExit):
+        print "---------------"
         print "Goodbye!"
-        # TODO: Turn on all switches
+        print "---------------"
+        # Turn off all switches
+        for switch in ( env.list_switches() ):
+            print "Turning Off: " + switch
+            env.get_switch( switch ).off()
