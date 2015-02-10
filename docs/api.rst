@@ -167,7 +167,7 @@ exposed::
 
     insight.today_kwh
     insight.current_power
-    insight.today_ontime
+    insight.today_on_time
     insight.on_for
     insight.in_standby_since
     insight.today_standby_time
