@@ -169,7 +169,6 @@ exposed::
     insight.current_power
     insight.today_on_time
     insight.on_for
-    insight.in_standby_since
     insight.today_standby_time
 
 Device Cache
