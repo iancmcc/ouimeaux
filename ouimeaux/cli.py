@@ -202,7 +202,7 @@ def clear(args):
 def server(args):
     from socketio.server import SocketIOServer
     from ouimeaux.server import app, initialize
-    initialize()
+    initialize(bind=getattr(args, 'bind', None))
     level = logging.INFO
     if getattr(args, 'debug', False):
         level = logging.DEBUG

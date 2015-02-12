@@ -25,10 +25,10 @@ api = Api(app)
 ENV = None
 
 
-def initialize():
+def initialize(bind=None):
     global ENV
     if ENV is None:
-        ENV = Environment(with_cache=False)
+        ENV = Environment(with_cache=False, bind = bind)
         ENV.start()
         gevent.spawn(ENV.discover, 10)
 
