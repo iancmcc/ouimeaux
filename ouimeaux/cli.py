@@ -22,9 +22,9 @@ def _state(device, readable=False):
         return state
 
 
-def scan(args, on_switch=NOOP, on_motion=NOOP, on_bridge=NOOP):
+def scan(args, on_switch=NOOP, on_motion=NOOP, on_bridge=NOOP, on_maker=NOOP):
     try:
-        env = Environment(on_switch, on_motion, on_bridge, with_subscribers=False,
+        env = Environment(on_switch, on_motion, on_bridge, on_maker, with_subscribers=False,
                           bind=args.bind, with_cache=args.use_cache)
         env.start()
         with get_cache() as c:
@@ -143,6 +143,68 @@ Dim must be between 0 and 255"""
     print "No device found with that name."
     sys.exit(1)
 
+def maker(args):
+    if args.state.lower() in ("on", "1", "true"):
+        state = "on"
+    elif args.state.lower() in ("off", "0", "false"):
+        state = "off"
+    elif args.state.lower() == "toggle":
+        state = "toggle"
+    elif args.state.lower() == "sensor":
+        state = "sensor"
+    elif args.state.lower() == "switch":
+        state = "switch"
+    else:
+        print """No valid action specified. 
+Usage: wemo maker NAME (on|off|toggle|sensor|switch)"""
+        sys.exit(1)
+
+    device_name = args.device
+    alias = WemoConfiguration().aliases.get(device_name)
+    if alias:
+        matches = lambda x:x == alias
+    elif device_name:
+        matches = matcher(device_name)
+    else:
+        matches = NOOP
+        
+    def on_switch(maker):
+        return
+
+    def on_motion(maker):
+        return
+        
+    def on_maker(maker):
+        if matches(maker.name):
+            if state == "toggle":
+                found_state = maker.get_state(force_update=True)
+                maker.set_state(not found_state)
+            elif state == "sensor":
+                if maker.has_sensor:
+                     if args.human_readable:
+                          if maker.sensor_state:
+                               sensorstate = 'Sensor not triggered'
+                          else:
+                               sensorstate = 'Sensor triggered'
+                          print sensorstate
+                     else:
+                          print maker.sensor_state
+                else:
+                     print "Sensor not present"
+            elif state == "switch":
+                 if maker.switch_mode:
+                      print "Momentary Switch" 
+                 else:
+                      print _state(maker, args.human_readable)
+            else:
+                getattr(maker, state)()
+            sys.exit(0)
+            
+    scan(args, on_switch, on_motion, on_maker)
+    # If we got here, we didn't find anything
+    print "No device found with that name."
+    sys.exit(1)
+
 
 def list_(args):
 
@@ -151,6 +213,9 @@ def list_(args):
 
     def on_motion(motion):
         print "Motion:", motion.name
+        
+    def on_maker(maker):
+        print "Maker:", maker.name
 
     def on_bridge(bridge):
         print "Bridge:", bridge.name
@@ -158,7 +223,7 @@ def list_(args):
         for light in bridge.Lights:
             print "Light:", light
 
-    scan(args, on_switch, on_motion, on_bridge)
+    scan(args, on_switch, on_motion, on_bridge, on_maker)
 
 
 def status(args):
@@ -168,6 +233,23 @@ def status(args):
 
     def on_motion(motion):
         print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
+        
+    def on_maker(maker):
+        if maker.switch_mode:
+             print "Maker:", maker.name, '\t', "Momentary State:", _state(maker, args.human_readable) 
+        else:
+             print "Maker:", maker.name, '\t', "Persistent State:", _state(maker, args.human_readable)
+        if maker.has_sensor:
+             if args.human_readable:
+                  if maker.sensor_state:
+                       sensorstate = 'Sensor not triggered'
+                  else:
+                       sensorstate = 'Sensor triggered'
+                  print '\t\t\t', "Sensor:", sensorstate
+             else:
+                  print '\t\t\t', "Sensor:", maker.sensor_state
+        else:
+             print '\t\t\t' "Sensor not present"
 
     def on_bridge(bridge):
         print "Bridge:", bridge.name, '\t', _state(bridge, args.human_readable)
@@ -175,8 +257,7 @@ def status(args):
         for light in bridge.Lights:
             print "Light:", light, '\t', bridge.light_get_state(bridge.Lights[light])
 
-    scan(args, on_switch, on_motion, on_bridge)
-
+    scan(args, on_switch, on_motion, on_bridge, on_maker)
 
 def clear(args):
     for fname in 'cache', 'cache.db':
@@ -192,7 +273,7 @@ def clear(args):
 def server(args):
     from socketio.server import SocketIOServer
     from ouimeaux.server import app, initialize
-    initialize()
+    initialize(bind=getattr(args, 'bind', None))
     level = logging.INFO
     if getattr(args, 'debug', False):
         level = logging.DEBUG
@@ -249,6 +330,12 @@ def wemo():
     stateparser.add_argument("device", help="Name or alias of the device")
     stateparser.add_argument("state", help="'on' or 'off'")
     stateparser.set_defaults(func=switch)
+    
+    makerparser = subparsers.add_parser("maker", 
+                                       help="Get sensor or switch state of a Maker or Turn on or off")
+    makerparser.add_argument("device", help="Name or alias of the device")
+    makerparser.add_argument("state", help="'on' or 'off' or 'toggle' or 'sensor' or 'switch'")
+    makerparser.set_defaults(func=maker)
 
     stateparser = subparsers.add_parser("light",
                                         help="Turn a WeMo LED light on or off")

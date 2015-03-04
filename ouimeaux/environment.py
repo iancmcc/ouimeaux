@@ -7,6 +7,7 @@ from ouimeaux.config import get_cache, WemoConfiguration
 from ouimeaux.device import DeviceUnreachable
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
+from ouimeaux.device.maker import Maker
 from ouimeaux.device.lightswitch import LightSwitch
 from ouimeaux.device.motion import Motion
 from ouimeaux.device.bridge import Bridge
@@ -30,11 +31,9 @@ class StopBroadcasting(Exception):
 class UnknownDevice(Exception):
     pass
 
-
-
 class Environment(object):
     def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, bridge_callback=_NOOP,
-                 with_discovery=True, with_subscribers=True, with_cache=None,
+                 maker_callback=_NOOP, with_discovery=True, with_subscribers=True, with_cache=None, 
                  bind=None, config_filename=None):
         """
         Create a WeMo environment.
@@ -63,9 +62,11 @@ class Environment(object):
         self._switch_callback = switch_callback
         self._motion_callback = motion_callback
         self._bridge_callback = bridge_callback
+        self._maker_callback = maker_callback
         self._switches = {}
         self._motions = {}
         self._bridges = {}
+        self._makers = {}
         self.devices = {}
 
     def __iter__(self):
@@ -136,6 +137,8 @@ class Environment(object):
             klass = Motion
         elif usn.startswith('uuid:Bridge'):
             klass = Bridge
+        elif usn.startswith('uuid:Maker'):
+        	klass = Maker
         else:
             log.info("Unrecognized device type. USN={0}".format(usn))
             return
@@ -155,6 +158,9 @@ class Environment(object):
             registry = self._bridges
             for light in device.Lights:
                 log.info("Found light \"%s\" connected to \"%s\"" % (light, device.name))
+        elif isinstance(device, Maker):
+            callback = self._maker_callback
+            registry = self._makers
         else:
             return
         self.devices[device.name] = device
@@ -188,6 +194,12 @@ class Environment(object):
         List motions discovered in the environment.
         """
         return self._motions.keys()
+        
+    def list_makers(self):
+    	"""
+        List makers discovered in the environment.
+        """
+        return self._makers.keys()
 
     def list_bridges(self):
         """
@@ -233,6 +245,15 @@ class Environment(object):
         """
         try:
             return self._bridges[name]
+        except KeyError:
+            raise UnknownDevice(name)
+
+    def get_maker(self, name):
+        """
+        Get a maker by name.
+        """
+        try:
+            return self._makers[name]
         except KeyError:
             raise UnknownDevice(name)
 

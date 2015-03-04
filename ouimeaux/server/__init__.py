@@ -10,6 +10,7 @@ from flask.ext.restful import reqparse, abort, Api, Resource
 from ouimeaux.signals import statechange
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
+from ouimeaux.device.maker import Maker
 from ouimeaux.environment import Environment, UnknownDevice
 from socketio import socketio_manage
 from socketio.namespace import BaseNamespace
@@ -24,10 +25,10 @@ api = Api(app)
 ENV = None
 
 
-def initialize():
+def initialize(bind=None):
     global ENV
     if ENV is None:
-        ENV = Environment(with_cache=False)
+        ENV = Environment(with_cache=False, bind = bind)
         ENV.start()
         gevent.spawn(ENV.discover, 10)
 
@@ -47,6 +48,17 @@ def serialize(device):
               'todaymw': device.today_kwh,
               'totalmw': device.totalmw,
               'currentpower': device.current_power
+              }
+    elif isinstance(device, Maker):
+       return {'name': device.name,
+              'type': device.__class__.__name__,
+              'serialnumber': device.serialnumber,
+              'state': device.get_state(),
+              'model': device.model,
+              'host': device.host,
+              'hassensor' : device.has_sensor,
+              'switchmode' : device.switch_mode,
+              'sensor' : device.sensor_state
               }
     return {'name': device.name,
             'type': device.__class__.__name__,

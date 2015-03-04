@@ -4,13 +4,14 @@
         class="btn btn-lg btn-block"
         ng-disabled="device.type=='Motion'"
         ng-click="toggleState(device)"
-        ng-class="{'btn-default': device.state==0, 'btn-success':device.state==1}">
+        ng-class="{'btn-default': device.state==0 || (device.type=='Maker' &&  device.sensor==0), 'btn-success':device.state==1 || (device.type=='Maker' &&  device.sensor==1)}">
          <span class="btn-icon glyphicon"
              ng-class="{
                 'glyphicon-off': device.type=='Switch' || 
                                  device.type=='LightSwitch' ||
                                  device.type=='Insight',
-                'glyphicon-transfer': device.type=='Motion'
+                'glyphicon-transfer': device.type=='Motion',
+                'glyphicon-adjust': device.type=='Maker'
              }"></span>
         {{device.name}}
     </a>
