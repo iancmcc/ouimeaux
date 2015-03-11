@@ -10,6 +10,7 @@ from ouimeaux.device.insight import Insight
 from ouimeaux.device.maker import Maker
 from ouimeaux.device.lightswitch import LightSwitch
 from ouimeaux.device.motion import Motion
+from ouimeaux.device.bridge import Bridge
 from ouimeaux.discovery import UPnP
 from ouimeaux.signals import discovered, devicefound
 from ouimeaux.subscribe import SubscriptionRegistry
@@ -30,11 +31,9 @@ class StopBroadcasting(Exception):
 class UnknownDevice(Exception):
     pass
 
-
-
 class Environment(object):
-    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, maker_callback=_NOOP, 
-                 with_discovery=True, with_subscribers=True, with_cache=None,
+    def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, bridge_callback=_NOOP,
+                 maker_callback=_NOOP, with_discovery=True, with_subscribers=True, with_cache=None, 
                  bind=None, config_filename=None):
         """
         Create a WeMo environment.
@@ -62,9 +61,11 @@ class Environment(object):
         self._with_subscribers = with_subscribers
         self._switch_callback = switch_callback
         self._motion_callback = motion_callback
+        self._bridge_callback = bridge_callback
         self._maker_callback = maker_callback
         self._switches = {}
         self._motions = {}
+        self._bridges = {}
         self._makers = {}
         self.devices = {}
 
@@ -134,6 +135,8 @@ class Environment(object):
             klass = Insight
         elif usn.startswith('uuid:Sensor'):
             klass = Motion
+        elif usn.startswith('uuid:Bridge'):
+            klass = Bridge
         elif usn.startswith('uuid:Maker'):
         	klass = Maker
         else:
@@ -150,6 +153,11 @@ class Environment(object):
         elif isinstance(device, Motion):
             callback = self._motion_callback
             registry = self._motions
+        elif isinstance(device, Bridge):
+            callback = self._bridge_callback
+            registry = self._bridges
+            for light in device.Lights:
+                log.info("Found light \"%s\" connected to \"%s\"" % (light, device.name))
         elif isinstance(device, Maker):
             callback = self._maker_callback
             registry = self._makers
@@ -162,7 +170,10 @@ class Environment(object):
             self.registry.on(device, 'BinaryState',
                              device._update_state)
         try:
-            device.ping()
+            if isinstance(device, Bridge):
+                pass
+            else:
+                device.ping()
         except DeviceUnreachable:
             return
         else:
@@ -189,6 +200,12 @@ class Environment(object):
         List makers discovered in the environment.
         """
         return self._makers.keys()
+
+    def list_bridges(self):
+        """
+        List bridges discovered in the environment.
+        """
+        return self._bridges.keys()
 
     def get(self, name):
         alias = self._config.aliases.get(name)
@@ -219,6 +236,15 @@ class Environment(object):
         """
         try:
             return self._motions[name]
+        except KeyError:
+            raise UnknownDevice(name)
+
+    def get_bridge(self, name):
+        """
+        Get a bridge by name.
+        """
+        try:
+            return self._bridges[name]
         except KeyError:
             raise UnknownDevice(name)
 
