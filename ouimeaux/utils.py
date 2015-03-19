@@ -72,7 +72,7 @@ def retry_with_delay(f, delay=60):
     """
     @wraps(f)
     def inner(*args, **kwargs):
-        kwargs['timeout'] = 1
+        kwargs['timeout'] = 5
         remaining = get_retries() + 1
         while remaining:
             remaining -= 1
