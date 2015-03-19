@@ -3,6 +3,13 @@
 History
 -------
 
+Release 0.7.9 (March 17, 2015)
+++++++++++++++++++++++++++++++
+- Command line support for WeMo LED Light (thanks @fritz-fritz)
+- Command line support for WeMo Maker (thanks @logjames)
+- Support for 2.0.0 firmware (thanks @fritz-fritz)
+- Bug fixes
+
 Release 0.7.3 (August 10, 2014)
 ++++++++++++++++++++++++++++++++
 - Fixed #18: Error when run as root
