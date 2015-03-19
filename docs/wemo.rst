@@ -29,6 +29,15 @@ instead of 0/1)::
     $ wemo -v switch "TV Room" status
     on
 
+WeMo LED Bulbs are supported on the command line as well. Control them like
+switches with ``wemo light``::
+
+    $ wemo light lamp on
+
+Or set them to a dimness level from 1 to 255::
+
+    $ wemo light lamp on 45
+
 The ``wemo`` script will do fuzzy matching of the name you pass in (this can be
 disabled with the ``-e`` option)::
 
