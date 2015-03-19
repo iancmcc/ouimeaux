@@ -35,7 +35,7 @@ class SubscriptionRegistry(object):
         self._resubscribe(device.basicevent.eventSubURL)
 
     def _resubscribe(self, url, sid=None):
-        headers = {'TIMEOUT': 300}
+        headers = {'TIMEOUT': 'Second-%d' % 1800}
         if sid is not None:
             headers['SID'] = sid
         else:
