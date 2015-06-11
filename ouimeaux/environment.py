@@ -158,6 +158,8 @@ class Environment(object):
             registry = self._bridges
             for light in device.Lights:
                 log.info("Found light \"%s\" connected to \"%s\"" % (light, device.name))
+            for group in device.Groups:
+                log.info("Found group \"%s\" connected to \"%s\"" % (group, device.name))
         elif isinstance(device, Maker):
             callback = self._maker_callback
             registry = self._makers

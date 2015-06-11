@@ -97,7 +97,7 @@ def light(args):
 Usage: wemo light NAME (on|off|toggle|status)"""
         sys.exit(1)
 
-    device_name = args.device
+    device_name = args.name
     alias = WemoConfiguration().aliases.get(device_name)
     if alias:
         matches = lambda x:x == alias
@@ -137,10 +137,33 @@ Dim must be between 0 and 255"""
                         sys.exit(1)
                     bridge.light_set_state(bridge.Lights[light],state=state,dim=dim)
                 sys.exit(0)
+        for group in bridge.Groups:
+            if matches(group):
+                if args.state == "toggle":
+                    found_state = bridge.group_get_state(bridge.Groups[group]).get('state')
+                    bridge.group_set_state(bridge.Groups[group], state=not found_state)
+                elif args.state == "status":
+                    print bridge.group_get_state(bridge.Groups[group])
+                else:
+                    if args.dim == None and args.state == "on":
+                        dim = bridge.group_get_state(bridge.Groups[group]).get('dim')
+                        state = 1
+                    elif args.state == "off":
+                        dim = None
+                        state = 0
+                    elif args.dim <= 255 and args.dim >= 0:
+                        dim = args.dim
+                        state = 1
+                    else:
+                        print """Invalid dim specified.
+Dim must be between 0 and 255"""
+                        sys.exit(1)
+                    bridge.group_set_state(bridge.Groups[group],state=state,dim=dim)
+                sys.exit(0)
 
     scan(args, on_switch, on_motion, on_bridge)
     # If we got here, we didn't find anything
-    print "No device found with that name."
+    print "No device or group found with that name."
     sys.exit(1)
 
 def maker(args):
@@ -220,6 +243,8 @@ def list_(args):
     def on_bridge(bridge):
         print "Bridge:", bridge.name
         bridge.bridge_get_lights()
+        for group in bridge.Groups:
+            print "Group:", group
         for light in bridge.Lights:
             print "Light:", light
 
@@ -256,6 +281,8 @@ def status(args):
         bridge.bridge_get_lights()
         for light in bridge.Lights:
             print "Light:", light, '\t', bridge.light_get_state(bridge.Lights[light])
+        for group in bridge.Groups:
+            print "Group:", group, '\t', bridge.group_get_state(bridge.Groups[group])
 
     scan(args, on_switch, on_motion, on_bridge, on_maker)
 
@@ -339,7 +366,7 @@ def wemo():
 
     stateparser = subparsers.add_parser("light",
                                         help="Turn a WeMo LED light on or off")
-    stateparser.add_argument("device", help="Name or alias of the device")
+    stateparser.add_argument("name", help="Name or alias of the device or group")
     stateparser.add_argument("state", help="'on' or 'off'")
     stateparser.add_argument("dim", nargs='?', type=int,
                         help="Dim value 0 to 255")
