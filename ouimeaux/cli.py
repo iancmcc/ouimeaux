@@ -114,6 +114,7 @@ Usage: wemo light NAME (on|off|toggle|status)"""
 
     def on_bridge(bridge):
         bridge.bridge_get_lights()
+        bridge.bridge_get_groups()
         for light in bridge.Lights:
             if matches(light):
                 if args.state == "toggle":
@@ -243,6 +244,7 @@ def list_(args):
     def on_bridge(bridge):
         print "Bridge:", bridge.name
         bridge.bridge_get_lights()
+        bridge.bridge_get_groups()
         for group in bridge.Groups:
             print "Group:", group
         for light in bridge.Lights:
