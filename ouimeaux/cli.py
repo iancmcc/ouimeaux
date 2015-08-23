@@ -5,7 +5,7 @@ import argparse
 
 from .discovery import UPnPLoopbackException
 from .environment import Environment
-from .config import get_cache, in_home, WemoConfiguration
+from .config import in_home, WemoConfiguration
 from .utils import matcher
 
 reqlog = logging.getLogger("requests.packages.urllib3.connectionpool")
@@ -24,15 +24,10 @@ def _state(device, readable=False):
 
 def scan(args, on_switch=NOOP, on_motion=NOOP, on_bridge=NOOP, on_maker=NOOP):
     try:
-        env = Environment(on_switch, on_motion, on_bridge, on_maker, with_subscribers=False,
-                          bind=args.bind, with_cache=args.use_cache)
+        env = Environment(on_switch, on_motion, on_bridge, on_maker,
+                with_subscribers=False, bind=args.bind)
         env.start()
-        with get_cache() as c:
-            if c.empty:
-                args.use_cache = False
-        if (args.use_cache is not None and not args.use_cache) or (
-                    env._config.cache is not None and not env._config.cache):
-            env.discover(args.timeout)
+        env.discover(args.timeout)
     except KeyboardInterrupt:
         sys.exit(0)
     except UPnPLoopbackException:
@@ -288,16 +283,6 @@ def status(args):
 
     scan(args, on_switch, on_motion, on_bridge, on_maker)
 
-def clear(args):
-    for fname in 'cache', 'cache.db':
-        filename = in_home('.wemo', fname)
-        try:
-            os.remove(filename)
-        except OSError:
-            # File didn't exist; cache must be clear
-            pass
-    print "Device cache cleared."
-
 
 def server(args):
     from socketio.server import SocketIOServer
@@ -336,19 +321,12 @@ def wemo():
     parser.add_argument("-e", "--exact-match", action="store_true", 
                         default=False,
                         help="Disable fuzzy matching for device names")
-    parser.add_argument("-f", "--no-cache", dest="use_cache", default=None,
-                        action="store_false",
-                        help="Disable the device cache")
     parser.add_argument("-v", "--human-readable", dest="human_readable", 
                         action="store_true", default=False,
                         help="Print statuses as human-readable words")
     parser.add_argument("-t", "--timeout", type=int, default=5,
                         help="Time in seconds to allow for discovery")
     subparsers = parser.add_subparsers()
-
-    clearparser = subparsers.add_parser("clear", 
-                                        help="Clear the device cache")
-    clearparser.set_defaults(func=clear)
 
     statusparser = subparsers.add_parser("status", 
                                          help="Print status of WeMo devices")

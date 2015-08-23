@@ -21,7 +21,7 @@ def mainloop(name):
             print "{} state is {state}".format(
                 sender.name, state="on" if kwargs.get('state') else "off")
 
-    env = Environment(with_cache=False)
+    env = Environment()
     try:
         env.start()
         env.discover(10)
