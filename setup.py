@@ -54,5 +54,8 @@ setup(
             'wemo = ouimeaux.cli:wemo'
         ]
     },
+    extras_require = {
+        'server':  ["flask-restful", "gevent-socketio"],
+    },
     test_suite='tests',
 )

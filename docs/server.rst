@@ -5,6 +5,11 @@ Server
 ``wemo server`` starts a process serving up both a Web app providing basic
 device control and a REST API allowing integration with any number of services.
 
+The necessary dependencies to run the server are not installed unless the
+``server`` feature is specified at installation::
+
+    $ pip install ouimeaux[server]
+
 Configuration
 -------------
 The IP and port to which the server will bind are specified by the ``listen``

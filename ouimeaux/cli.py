@@ -285,8 +285,12 @@ def status(args):
 
 
 def server(args):
-    from socketio.server import SocketIOServer
-    from ouimeaux.server import app, initialize
+    try:
+        from socketio.server import SocketIOServer
+        from ouimeaux.server import app, initialize
+    except ImportError:
+        print "ouimeaux server dependencies are not installed. Please run, e.g., 'pip install ouimeaux[server]'"
+        sys.exit(1)
     initialize(bind=getattr(args, 'bind', None))
     level = logging.INFO
     if getattr(args, 'debug', False):

@@ -13,6 +13,11 @@ Or, if you have virtualenvwrapper installed::
     $ mkvirtualenv ouimeaux
     $ pip install ouimeaux
 
+If you want to enable ``wemo server`` functionality, specify the ``server``
+feature to install the necessary dependencies::
+
+    $ pip install ouimeaux[server]
+
 Linux
 -----
 ouimeaux requires Python header files to build some dependencies, and is
