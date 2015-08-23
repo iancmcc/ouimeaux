@@ -5,7 +5,7 @@ from gevent import socket
 from gevent.server import DatagramServer
 
 from ouimeaux.utils import get_ip_address
-from pysignals import receiver
+from ouimeaux.pysignals import receiver
 from ouimeaux.signals import discovered
 
 
