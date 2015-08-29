@@ -12,7 +12,7 @@ class Maker(Device):
         """
         Returns 0 if off and 1 if on.
         """
-        # The base implementation using GetBinaryState doesn't for for Maker (always returns 0).
+        # The base implementation using GetBinaryState doesn't work for Maker (always returns 0).
         # So pull the switch state from the atrributes instead
         if force_update or self._state is None:
             return(int(self.maker_attribs.get('switchstate',0)))
