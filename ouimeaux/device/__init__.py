@@ -25,11 +25,10 @@ class Device(object):
         self.services = {}
         for svc in sl.service:
             svcname = svc.get_serviceType().split(':')[-2]
-            if svcname != "deviceevent":
-                service = Service(svc, base_url)
-                service.eventSubURL = base_url + svc.get_eventSubURL()
-                self.services[svcname] = service
-                setattr(self, svcname, service)
+            service = Service(svc, base_url)
+            service.eventSubURL = base_url + svc.get_eventSubURL()
+            self.services[svcname] = service
+            setattr(self, svcname, service)
 
     def _update_state(self, value):
         self._state = int(value)
