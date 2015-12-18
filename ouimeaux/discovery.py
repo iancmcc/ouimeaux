@@ -38,19 +38,20 @@ class UPnP(object):
 
     def _response_received(self, message, address):
         log.debug("Received a response from {0}:{1}".format(*address))
-        if address[0] not in self.clients:
-            lines = message.splitlines()
-            lines.pop(0) # HTTP status
-            headers = {}
-            for line in lines:
-                try:
-                    header, value = line.split(":", 1)
-                    headers[header.lower()] = value.strip()
-                except ValueError:
-                    continue
-            if (headers.get('x-user-agent', None) == 'redsonic'):
-                log.debug("Found WeMo at {0}:{1}".format(*address))
-                self.clients[address[0]] = headers
+        lines = message.splitlines()
+        lines.pop(0) # HTTP status
+        headers = {}
+        for line in lines:
+            try:
+                header, value = line.split(":", 1)
+                headers[header.lower()] = value.strip()
+            except ValueError:
+                continue
+        if (headers.get('x-user-agent', None) == 'redsonic'):
+            location=headers.get('location',None)
+            if location is not None and location not in self.clients:
+                log.debug("Found WeMo at {0}".format(location))
+                self.clients[location] = headers
                 gevent.spawn(discovered.send, self, address=address,
                         headers=headers)
 
