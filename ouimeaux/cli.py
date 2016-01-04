@@ -192,6 +192,9 @@ Usage: wemo maker NAME (on|off|toggle|sensor|switch)"""
 
     def on_motion(maker):
         return
+    
+    def on_bridge(maker):
+        return
         
     def on_maker(maker):
         if matches(maker.name):
@@ -219,7 +222,7 @@ Usage: wemo maker NAME (on|off|toggle|sensor|switch)"""
                 getattr(maker, state)()
             sys.exit(0)
             
-    scan(args, on_switch, on_motion, on_maker)
+    scan(args, on_switch, on_motion, on_bridge, on_maker)
     # If we got here, we didn't find anything
     print "No device found with that name."
     sys.exit(1)
