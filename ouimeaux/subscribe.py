@@ -78,7 +78,7 @@ class SubscriptionRegistry(object):
                     self._event(device, property_.tag, text)
         start_response('200 OK', [
             ('Content-Type', 'text/html'),
-            ('Content-Length', len(SUCCESS)),
+            ('Content-Length', str(len(SUCCESS))),
             ('Connection', 'close')
         ])
         yield SUCCESS
