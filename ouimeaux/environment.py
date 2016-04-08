@@ -80,7 +80,7 @@ class Environment(object):
             # Start the server to listen to new devices
             self.upnp.server.set_spawn(2)
             self.upnp.server.start()
-        elif self._with_subscribers:
+        if self._with_subscribers:
             # Start the server to listen to events
             self.registry.server.set_spawn(2)
             self.registry.server.start()
