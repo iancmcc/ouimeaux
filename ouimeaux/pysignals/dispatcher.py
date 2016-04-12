@@ -3,7 +3,7 @@ import threading
 
 from . import saferef
 
-__all__ = [ 'set_debug', 'Signal', 'receiver' ]
+__all__ = [ 'set_debug', 'Signal', 'StateChange', 'receiver' ]
 
 WEAKREF_TYPES = (weakref.ReferenceType, saferef.BoundMethodWeakref)
 
@@ -20,17 +20,17 @@ def set_debug( val ):
 class Signal(object):
     """
     Base class for all signals
-    
+
     Internal attributes:
-    
+
         receivers
             { receriverkey (id) : weakref(receiver) }
     """
-    
+
     def __init__(self, providing_args=None):
         """
         Create a new signal.
-        
+
         providing_args
             A list of the arguments this signal can pass along in a send() call.
         """
@@ -43,9 +43,9 @@ class Signal(object):
     def connect(self, receiver, sender=None, weak=True, dispatch_uid=None):
         """
         Connect receiver to sender for signal.
-    
+
         Arguments:
-        
+
             receiver
                 A function or an instance method which is to receive signals.
                 Receivers must be hashable objects.
@@ -53,7 +53,7 @@ class Signal(object):
                 If weak is True, then receiver must be weak-referencable (more
                 precisely saferef.safeRef() must be able to create a reference
                 to the receiver).
-        
+
                 Receivers must be able to accept keyword arguments.
 
                 If receivers have a dispatch_uid attribute, the receiver will
@@ -69,7 +69,7 @@ class Signal(object):
                 module will attempt to use weak references to the receiver
                 objects. If this parameter is false, then strong references will
                 be used.
-        
+
             dispatch_uid
                 An identifier used to uniquely identify a particular instance of
                 a receiver. This will usually be a string, though it may be
@@ -79,7 +79,7 @@ class Signal(object):
         if pysignals_debug:
             import inspect
             assert callable(receiver), "Signal receivers must be callable."
-            
+
             # Check for **kwargs
             # Not all callables are inspectable with getargspec, so we'll
             # try a couple different ways but in the end fall back on assuming
@@ -95,7 +95,7 @@ class Signal(object):
             if argspec:
                 assert argspec[2] is not None, \
                     "Signal receivers must accept keyword arguments (**kwargs)."
-        
+
         if dispatch_uid:
             lookup_key = (dispatch_uid, _make_id(sender))
         else:
@@ -120,19 +120,19 @@ class Signal(object):
 
         If weak references are used, disconnect need not be called. The receiver
         will be remove from dispatch automatically.
-    
+
         Arguments:
-        
+
             receiver
                 The registered receiver to disconnect. May be none if
                 dispatch_uid is specified.
-            
+
             sender
                 The registered sender to disconnect
-            
+
             weak
                 The weakref state to disconnect
-            
+
             dispatch_uid
                 the unique identifier of the receiver to disconnect
         """
@@ -140,7 +140,7 @@ class Signal(object):
             lookup_key = (dispatch_uid, _make_id(sender))
         else:
             lookup_key = (_make_id(receiver), _make_id(sender))
-        
+
         self.lock.acquire()
         try:
             for index in xrange(len(self.receivers)):
@@ -160,10 +160,10 @@ class Signal(object):
         receivers called if a raises an error.
 
         Arguments:
-        
+
             sender
                 The sender of the signal Either a specific object or None.
-    
+
             named
                 Named arguments which will be passed to receivers.
 
@@ -183,7 +183,7 @@ class Signal(object):
         Send signal from sender to all connected receivers catching errors.
 
         Arguments:
-        
+
             sender
                 The sender of the signal. Can be any python object (normally one
                 registered with a connect if you actually want something to
@@ -257,7 +257,7 @@ class Signal(object):
                         del self.receivers[last_idx-idx]
         finally:
             self.lock.release()
-    
+
     def receive(self, **kwargs):
         """
         A decorator for connecting receivers to this signal. Used by passing in the
@@ -272,6 +272,49 @@ class Signal(object):
             self.connect(func, **kwargs)
             return func
         return _decorator
+
+class StateChange( Signal ):
+
+    def __init__(self, providing_args=None):
+        super(StateChange, self).__init__(providing_args)
+        self.sender_status = {}
+
+    def send(self, sender, **named):
+        """
+        Send signal from sender to all connected receivers *only if* the signal's
+        contents has changed.
+
+        If any receiver raises an error, the error propagates back through send,
+        terminating the dispatch loop, so it is quite possible to not have all
+        receivers called if a raises an error.
+
+        Arguments:
+
+            sender
+                The sender of the signal Either a specific object or None.
+
+            named
+                Named arguments which will be passed to receivers.
+
+        Returns a list of tuple pairs [(receiver, response), ... ].
+        """
+        responses = []
+        if not self.receivers:
+            return responses
+
+        sender_id = _make_id(sender)
+        if sender_id not in self.sender_status:
+            self.sender_status[sender_id] = {}
+
+        if self.sender_status[sender_id] == named:
+            return responses
+
+        self.sender_status[sender_id] = named
+
+        for receiver in self._live_receivers(sender_id):
+            response = receiver(signal=self, sender=sender, **named)
+            responses.append((receiver, response))
+        return responses
 
 def receiver(signal, **kwargs):
     """
