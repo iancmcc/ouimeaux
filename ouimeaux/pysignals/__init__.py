@@ -5,4 +5,4 @@ originally based on pydispatch (BSD) http://pypi.python.org/pypi/PyDispatcher/2.
 See license.txt for original licenses.
 """
 
-from .dispatcher import Signal, receiver
+from .dispatcher import Signal, StateChange, receiver

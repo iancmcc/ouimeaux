@@ -1,4 +1,4 @@
-from ouimeaux.pysignals import Signal, receiver
+from ouimeaux.pysignals import Signal, StateChange, receiver
 
 # Work around a bug in pysignals when in the interactive interpreter
 import sys
@@ -17,7 +17,7 @@ devicefound = Signal()
 subscription = Signal(providing_args=["type", "value"])
 
 # Fires when a device changes state
-statechange = Signal(providing_args=["state"])
+statechange = StateChange(providing_args=["state"])
 
 
 @receiver(subscription)
