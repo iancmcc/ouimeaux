@@ -71,20 +71,18 @@ class Bridge(Device):
         return self.group_attributes(group).get('GroupID')
 
     def light_get_state(self, light):
-        (
-            state, # 0 (off) or 1 (on)
-            dim # 0-255 dark to bright
-        ) = self.light_attributes(light).get('state').split(':', 1)[0].split(',',1)
+        attr = self.light_attributes(light).get('state').split(':', 1)[0].split(',')
+        state = attr[0] # 0 (off) or 1 (on)
+        dim = attr[1]   # 0-255 dark to bright
         return {
             'state' : state,
             'dim' : dim
         }
 
     def group_get_state(self, group):
-        (
-            state, # 0 (off) or 1 (on)
-            dim # 0-255 dark to bright
-        ) = self.group_attributes(group).get('state').split(':', 1)[0].split(',',1)
+        attr = self.group_attributes(group).get('state').split(':', 1)[0].split(',')
+        state = attr[0] # 0 (off) or 1 (on)
+        dim = attr[1]   # 0-255 dark to bright
         return {
             'state' : state,
             'dim' : dim
@@ -94,18 +92,17 @@ class Bridge(Device):
         if state == None:
             state = self.light_get_state(light).get('state')
         if dim == None:
-            state = self.light_get_state(light).get('dim')
+            dim = self.light_get_state(light).get('dim')
 
-        sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;NO&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{devID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10006,10008&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{state},{dim}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(devID=self.light_get_id(light),state=state,dim=dim)
-
+        sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;NO&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{devID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10006&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{state}&lt;/CapabilityValue&gt;&lt;CapabilityID&gt;10008&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{dim}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(devID=self.light_get_id(light),state=state,dim=dim)
         return self.bridge.SetDeviceStatus(DeviceStatusList=sendState)
 
     def group_set_state(self, group, state=None, dim=None):
         if state == None:
             state = self.group_get_state(group).get('state')
         if dim == None:
-            state = self.group_get_state(group).get('dim')
+            dim = self.group_get_state(group).get('dim')
 
-        sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;YES&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{groupID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10006,10008&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{state},{dim}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(groupID=self.group_get_id(group),state=state,dim=dim)
+        sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;YES&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{groupID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10006&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{state}&lt;/CapabilityValue&gt;&lt;CapabilityID&gt;10008&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{dim}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(groupID=self.group_get_id(group),state=state,dim=dim)
 
         return self.bridge.SetDeviceStatus(DeviceStatusList=sendState)
