@@ -80,7 +80,7 @@ class Bridge(Device):
         }
 
     def group_get_state(self, group):
-        attr = self.group_attributes(group).get('state').split(':', 1)[0].split(',',1)
+        attr = self.group_attributes(group).get('state').split(':', 1)[0].split(',')
         state = attr[0] # 0 (off) or 1 (on)
         dim = attr[1]   # 0-255 dark to bright
         return {
