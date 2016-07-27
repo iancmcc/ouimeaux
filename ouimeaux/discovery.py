@@ -86,8 +86,8 @@ def test():
 
     @receiver(discovered)
     def handler(sender, **kwargs):
-        print "I GOT ONE"
-        print kwargs['address'], kwargs['headers']
+        print("I GOT ONE")
+        print(kwargs['address'], kwargs['headers'])
 
     upnp = UPnP()
     upnp.server.set_spawn(1)
