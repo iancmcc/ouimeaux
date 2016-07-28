@@ -63,10 +63,10 @@ class Device(object):
             raise DeviceUnreachable(self)
 
     def explain(self):
-        for name, svc in self.services.iteritems():
+        for name, svc in self.services.items():
             print(name)
             print('-' * len(name))
-            for aname, action in svc.actions.iteritems():
+            for aname, action in svc.actions.items():
                 print("  %s(%s)" % (aname, ', '.join(action.args)))
             print()
 

@@ -1579,8 +1579,8 @@ def parse(inFileName):
 
 
 def parseString(inString):
-    from StringIO import StringIO
-    doc = parsexml_(StringIO(inString))
+    from io import BytesIO
+    doc = parsexml_(BytesIO(inString))
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
