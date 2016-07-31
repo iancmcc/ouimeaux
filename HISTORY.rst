@@ -3,6 +3,19 @@
 History
 -------
 
+Release 0.8.0 (July 30, 2016)
++++++++++++++++++++++++++++++
+- Randomize subscription ports to enable simultaneous ouimeaux scripts (thanks @bennytheshap)
+- Fix for WeMo LED Light support (thanks @sstangle73)
+- #32: Removed address cache, broke server out into optional feature
+- Fix for Maker state reporting (thanks @pavoni)
+- Filter by SSDP location, fixing case where multiple devices respond from the same IP (thanks @szakharchenko)
+- Fix Maker event handlers, which were being passed as bridges (thanks @maxlazarov)
+- Work around gevent-socketio bug by explicitly casting header value as string
+- Fix for inconsistent Light state (thanks @canduuk)
+- StateChange signals are now a separate class and do not fire if value is unchanged (thanks @esecules)
+- Python 3 support (thanks to @drock371)
+
 Release 0.7.9 (March 17, 2015)
 ++++++++++++++++++++++++++++++
 - Command line support for WeMo LED Light (thanks @fritz-fritz)

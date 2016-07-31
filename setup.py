@@ -22,7 +22,7 @@ requirements = [x.strip() for x in open(here('requirements.txt')).readlines()]
 
 setup(
     name='ouimeaux',
-    version='0.7.9',
+    version='0.8',
     description='Open source control for Belkin WeMo devices',
     long_description=readme + '\n\n' + history,
     author='Ian McCracken',
@@ -48,6 +48,8 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
     entry_points={
         'console_scripts': [
