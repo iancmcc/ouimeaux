@@ -5,7 +5,7 @@ from gevent import socket
 from gevent.server import DatagramServer
 
 from ouimeaux.utils import get_ip_address
-from pysignals import receiver
+from ouimeaux.pysignals import receiver
 from ouimeaux.signals import discovered
 
 
@@ -38,19 +38,20 @@ class UPnP(object):
 
     def _response_received(self, message, address):
         log.debug("Received a response from {0}:{1}".format(*address))
-        if address[0] not in self.clients:
-            lines = message.splitlines()
-            lines.pop(0) # HTTP status
-            headers = {}
-            for line in lines:
-                try:
-                    header, value = line.split(":", 1)
-                    headers[header.lower()] = value.strip()
-                except ValueError:
-                    continue
-            if (headers.get('x-user-agent', None) == 'redsonic'):
-                log.debug("Found WeMo at {0}:{1}".format(*address))
-                self.clients[address[0]] = headers
+        lines = [x.decode() for x in message.splitlines()]
+        lines.pop(0) # HTTP status
+        headers = {}
+        for line in lines:
+            try:
+                header, value = line.split(":", 1)
+                headers[header.lower()] = value.strip()
+            except ValueError:
+                continue
+        if (headers.get('x-user-agent', None) == 'redsonic'):
+            location=headers.get('location',None)
+            if location is not None and location not in self.clients:
+                log.debug("Found WeMo at {0}".format(location))
+                self.clients[location] = headers
                 gevent.spawn(discovered.send, self, address=address,
                         headers=headers)
 
@@ -77,7 +78,7 @@ class UPnP(object):
                                "MX:2",
                                'MAN:"ssdp:discover"',
                                "", "")).format(**self.__dict__)
-        self.server.sendto(request, (self.mcast_ip, self.mcast_port))
+        self.server.sendto(request.encode(), (self.mcast_ip, self.mcast_port))
 
 
 def test():
@@ -85,8 +86,8 @@ def test():
 
     @receiver(discovered)
     def handler(sender, **kwargs):
-        print "I GOT ONE"
-        print kwargs['address'], kwargs['headers']
+        print("I GOT ONE")
+        print(kwargs['address'], kwargs['headers'])
 
     upnp = UPnP()
     upnp.server.set_spawn(1)

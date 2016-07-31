@@ -1,6 +1,5 @@
-gevent >= 1.0
+gevent >= 1.1rc2
 requests >= 2.3.0
 pyyaml
-pysignals
-flask-restful
-gevent-socketio
+six
+future

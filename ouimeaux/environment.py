@@ -3,7 +3,7 @@ import logging
 import gevent
 import requests
 
-from ouimeaux.config import get_cache, WemoConfiguration
+from ouimeaux.config import WemoConfiguration
 from ouimeaux.device import DeviceUnreachable
 from ouimeaux.device.switch import Switch
 from ouimeaux.device.insight import Insight
@@ -17,6 +17,7 @@ from ouimeaux.subscribe import SubscriptionRegistry
 from ouimeaux.utils import matcher
 
 
+_MARKER = object()
 _NOOP = lambda *x: None
 log = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class UnknownDevice(Exception):
 
 class Environment(object):
     def __init__(self, switch_callback=_NOOP, motion_callback=_NOOP, bridge_callback=_NOOP,
-                 maker_callback=_NOOP, with_discovery=True, with_subscribers=True, with_cache=None, 
+                 maker_callback=_NOOP, with_discovery=True, with_subscribers=True, with_cache=_MARKER, 
                  bind=None, config_filename=None):
         """
         Create a WeMo environment.
@@ -50,13 +51,12 @@ class Environment(object):
         @param bind: ip:port to which to bind the response server.
         @type bind: str
         """
+        if with_cache is not _MARKER:
+            log.warn("with_cache argument is deprecated (and nonfunctional)")
         self._config = WemoConfiguration(filename=config_filename)
         self.upnp = UPnP(bind=bind or self._config.bind)
         discovered.connect(self._found_device, self.upnp)
         self.registry = SubscriptionRegistry()
-        if with_cache is None:
-            with_cache = (self._config.cache if self._config.cache is not None else True)
-        self._with_cache = with_cache
         self._with_discovery = with_discovery
         self._with_subscribers = with_subscribers
         self._switch_callback = switch_callback
@@ -76,16 +76,10 @@ class Environment(object):
         """
         Start the server(s) necessary to receive information from devices.
         """
-        if self._with_cache:
-            with get_cache() as c:
-                for dev in c.devices:
-                    self._process_device(dev, cache=False)
-
         if self._with_discovery:
             # Start the server to listen to new devices
             self.upnp.server.set_spawn(2)
             self.upnp.server.start()
-
         if self._with_subscribers:
             # Start the server to listen to events
             self.registry.server.set_spawn(2)
@@ -146,7 +140,7 @@ class Environment(object):
         log.info("Found device %r at %s" % (device, address))
         self._process_device(device)
 
-    def _process_device(self, device, cache=None):
+    def _process_device(self, device):
         if isinstance(device, Switch):
             callback = self._switch_callback
             registry = self._switches
@@ -158,6 +152,8 @@ class Environment(object):
             registry = self._bridges
             for light in device.Lights:
                 log.info("Found light \"%s\" connected to \"%s\"" % (light, device.name))
+            for group in device.Groups:
+                log.info("Found group \"%s\" connected to \"%s\"" % (group, device.name))
         elif isinstance(device, Maker):
             callback = self._maker_callback
             registry = self._makers
@@ -176,10 +172,6 @@ class Environment(object):
                 device.ping()
         except DeviceUnreachable:
             return
-        else:
-            if cache if cache is not None else self._with_cache:
-                with get_cache() as c:
-                    c.add_device(device)
         devicefound.send(device)
         callback(device)
 
@@ -196,7 +188,7 @@ class Environment(object):
         return self._motions.keys()
         
     def list_makers(self):
-    	"""
+        """
         List makers discovered in the environment.
         """
         return self._makers.keys()

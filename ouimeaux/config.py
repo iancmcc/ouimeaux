@@ -1,11 +1,5 @@
-from contextlib import contextmanager, closing
 import os
-import shelve
-import gevent
-from gevent.lock import RLock
-
 import yaml
-from ouimeaux.device import Device
 
 
 def in_home(*path):
@@ -44,10 +38,6 @@ aliases:
 #
 # bind: 10.1.2.3:9090
 
-# Whether to use a device cache (stored at ~/.wemo/cache)
-#
-# cache: true
-
 # Web app bind address
 #
 # listen: 0.0.0.0:5000
@@ -64,56 +54,5 @@ aliases:
         return self._parsed.get('bind', None)
 
     @property
-    def cache(self):
-        return self._parsed.get('cache', None)
-
-    @property
     def listen(self):
         return self._parsed.get('listen', None)
-
-
-class Cache(object):
-    def __init__(self, shelf):
-        self._shelf = shelf
-
-    @property
-    def empty(self):
-        return not self._shelf.get('devices')
-
-    def clear(self):
-        self._shelf.clear()
-
-    def add_device(self, device):
-        assert isinstance(device, Device)
-        d = self._shelf.setdefault('devices', {})
-        d[device.name] = device
-
-    def invalidate(self, device):
-        assert isinstance(device, Device)
-        d = self._shelf.setdefault('devices', {})
-        d.pop(device.name)
-        self._shelf.clear()
-        self._shelf['devices'] = d
-
-    @property
-    def devices(self):
-        try:
-            return self._shelf.setdefault('devices', {}).itervalues()
-        except ImportError:
-            self._shelf.clear()
-            return self.devices
-
-
-_CACHE_LOCK = RLock()
-
-@contextmanager
-def get_cache():
-    ensure_directory(in_home('.wemo'))
-    filename = in_home('.wemo', 'cache')
-    _CACHE_LOCK.acquire(blocking=True)
-    try:
-        with closing(shelve.open(filename, writeback=True)) as cache:
-            yield Cache(cache)
-    finally:
-        _CACHE_LOCK.release()
-

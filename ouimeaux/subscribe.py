@@ -11,6 +11,9 @@ from ouimeaux.device.insight import Insight
 from ouimeaux.device.maker import Maker
 from ouimeaux.signals import subscription
 
+from random import randint
+
+
 
 log = logging.getLogger(__name__)
 
@@ -22,6 +25,8 @@ class SubscriptionRegistry(object):
     def __init__(self):
         self._devices = {}
         self._callbacks = defaultdict(list)
+        self.port = randint(8300, 8990)
+
 
     def register(self, device):
         if not device:
@@ -41,7 +46,7 @@ class SubscriptionRegistry(object):
         else:
             host = get_ip_address()
             headers.update({
-                "CALLBACK": '<http://%s:8989>' % host,
+                "CALLBACK": '<http://%s:%d>'%(host, self.port),
                 "NT": "upnp:event"
             })
         response = requests_request(method="SUBSCRIBE", url=url,
@@ -73,7 +78,7 @@ class SubscriptionRegistry(object):
                     self._event(device, property_.tag, text)
         start_response('200 OK', [
             ('Content-Type', 'text/html'),
-            ('Content-Length', len(SUCCESS)),
+            ('Content-Length', str(len(SUCCESS))),
             ('Connection', 'close')
         ])
         yield SUCCESS
@@ -93,7 +98,6 @@ class SubscriptionRegistry(object):
         """
         server = getattr(self, "_server", None)
         if server is None:
-            server = WSGIServer(('', 8989), self._handle, log=None)
+            server = WSGIServer(('', self.port), self._handle, log=None)
             self._server = server
         return server
-

@@ -13,21 +13,21 @@ def mainloop(name):
     @receiver(devicefound)
     def found(sender, **kwargs):
         if matches(sender.name):
-            print "Found device:", sender.name
+            print("Found device:", sender.name)
 
     @receiver(statechange)
     def motion(sender, **kwargs):
         if matches(sender.name):
-            print "{} state is {state}".format(
-                sender.name, state="on" if kwargs.get('state') else "off")
+            print("{} state is {state}".format(
+                sender.name, state="on" if kwargs.get('state') else "off"))
 
-    env = Environment(with_cache=False)
+    env = Environment()
     try:
         env.start()
         env.discover(10)
         env.wait()
     except (KeyboardInterrupt, SystemExit):
-        print "Goodbye!"
+        print("Goodbye!")
         sys.exit(0)
 
 
