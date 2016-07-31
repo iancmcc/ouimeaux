@@ -8,6 +8,7 @@ Subpackages
 
     ouimeaux.device
     ouimeaux.examples
+    ouimeaux.pysignals
     ouimeaux.server
 
 Submodules
