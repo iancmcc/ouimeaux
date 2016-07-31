@@ -31,11 +31,11 @@ def scan(args, on_switch=NOOP, on_motion=NOOP, on_bridge=NOOP, on_maker=NOOP):
     except KeyboardInterrupt:
         sys.exit(0)
     except UPnPLoopbackException:
-        print """
+        print("""
 Loopback interface is being used! You will probably not receive any responses 
 from devices.  Use ifconfig to find your IP address, then either pass the 
 --bind argument or edit ~/.wemo/config.yml to specify the IP to which devices 
-should call back during discovery.""".strip()
+should call back during discovery.""".strip())
         sys.exit(1)
 
 
@@ -49,8 +49,8 @@ def switch(args):
     elif args.state.lower() == "status":
         state = "status"
     else:
-        print """No valid action specified. 
-Usage: wemo switch NAME (on|off|toggle|status)"""
+        print("""No valid action specified. 
+Usage: wemo switch NAME (on|off|toggle|status)""")
         sys.exit(1)
 
     device_name = args.device
@@ -68,14 +68,14 @@ Usage: wemo switch NAME (on|off|toggle|status)"""
                 found_state = switch.get_state(force_update=True)
                 switch.set_state(not found_state)
             elif state == "status":
-                print _state(switch, args.human_readable)
+                print(_state(switch, args.human_readable))
             else:
                 getattr(switch, state)()
             sys.exit(0)
 
     scan(args, on_switch)
     # If we got here, we didn't find anything
-    print "No device found with that name."
+    print("No device found with that name.")
     sys.exit(1)
 
 def light(args):
@@ -88,8 +88,8 @@ def light(args):
     elif args.state.lower() == "status":
         state = "status"
     else:
-        print """No valid action specified. 
-Usage: wemo light NAME (on|off|toggle|status)"""
+        print("""No valid action specified. 
+Usage: wemo light NAME (on|off|toggle|status)""")
         sys.exit(1)
 
     device_name = args.name
@@ -116,7 +116,7 @@ Usage: wemo light NAME (on|off|toggle|status)"""
                     found_state = bridge.light_get_state(bridge.Lights[light]).get('state')
                     bridge.light_set_state(bridge.Lights[light], state=not found_state)
                 elif args.state == "status":
-                    print bridge.light_get_state(bridge.Lights[light])
+                    print(bridge.light_get_state(bridge.Lights[light]))
                 else:
                     if args.dim == None and args.state == "on":
                         dim = bridge.light_get_state(bridge.Lights[light]).get('dim')
@@ -128,8 +128,8 @@ Usage: wemo light NAME (on|off|toggle|status)"""
                         dim = args.dim
                         state = 1
                     else:
-                        print """Invalid dim specified. 
-Dim must be between 0 and 255"""
+                        print("""Invalid dim specified. 
+Dim must be between 0 and 255""")
                         sys.exit(1)
                     bridge.light_set_state(bridge.Lights[light],state=state,dim=dim)
                 sys.exit(0)
@@ -139,7 +139,7 @@ Dim must be between 0 and 255"""
                     found_state = bridge.group_get_state(bridge.Groups[group]).get('state')
                     bridge.group_set_state(bridge.Groups[group], state=not found_state)
                 elif args.state == "status":
-                    print bridge.group_get_state(bridge.Groups[group])
+                    print(bridge.group_get_state(bridge.Groups[group]))
                 else:
                     if args.dim == None and args.state == "on":
                         dim = bridge.group_get_state(bridge.Groups[group]).get('dim')
@@ -151,15 +151,15 @@ Dim must be between 0 and 255"""
                         dim = args.dim
                         state = 1
                     else:
-                        print """Invalid dim specified.
-Dim must be between 0 and 255"""
+                        print("""Invalid dim specified.
+Dim must be between 0 and 255""")
                         sys.exit(1)
                     bridge.group_set_state(bridge.Groups[group],state=state,dim=dim)
                 sys.exit(0)
 
     scan(args, on_switch, on_motion, on_bridge)
     # If we got here, we didn't find anything
-    print "No device or group found with that name."
+    print("No device or group found with that name.")
     sys.exit(1)
 
 def maker(args):
@@ -174,8 +174,8 @@ def maker(args):
     elif args.state.lower() == "switch":
         state = "switch"
     else:
-        print """No valid action specified. 
-Usage: wemo maker NAME (on|off|toggle|sensor|switch)"""
+        print("""No valid action specified. 
+Usage: wemo maker NAME (on|off|toggle|sensor|switch)""")
         sys.exit(1)
 
     device_name = args.device
@@ -208,45 +208,45 @@ Usage: wemo maker NAME (on|off|toggle|sensor|switch)"""
                                sensorstate = 'Sensor not triggered'
                           else:
                                sensorstate = 'Sensor triggered'
-                          print sensorstate
+                          print(sensorstate)
                      else:
-                          print maker.sensor_state
+                          print(maker.sensor_state)
                 else:
-                     print "Sensor not present"
+                     print("Sensor not present")
             elif state == "switch":
                  if maker.switch_mode:
-                      print "Momentary Switch" 
+                      print("Momentary Switch")
                  else:
-                      print _state(maker, args.human_readable)
+                      print(_state(maker, args.human_readable))
             else:
                 getattr(maker, state)()
             sys.exit(0)
             
     scan(args, on_switch, on_motion, on_bridge, on_maker)
     # If we got here, we didn't find anything
-    print "No device found with that name."
+    print("No device found with that name.")
     sys.exit(1)
 
 
 def list_(args):
 
     def on_switch(switch):
-        print "Switch:", switch.name
+        print("Switch:", switch.name)
 
     def on_motion(motion):
-        print "Motion:", motion.name
+        print("Motion:", motion.name)
         
     def on_maker(maker):
-        print "Maker:", maker.name
+        print("Maker:", maker.name)
 
     def on_bridge(bridge):
-        print "Bridge:", bridge.name
+        print("Bridge:", bridge.name)
         bridge.bridge_get_lights()
         bridge.bridge_get_groups()
         for group in bridge.Groups:
-            print "Group:", group
+            print("Group:", group)
         for light in bridge.Lights:
-            print "Light:", light
+            print("Light:", light)
 
     scan(args, on_switch, on_motion, on_bridge, on_maker)
 
@@ -254,35 +254,35 @@ def list_(args):
 def status(args):
 
     def on_switch(switch):
-        print "Switch:", switch.name, '\t', _state(switch, args.human_readable)
+        print("Switch:", switch.name, '\t', _state(switch, args.human_readable))
 
     def on_motion(motion):
-        print "Motion:", motion.name, '\t', _state(motion, args.human_readable)
+        print("Motion:", motion.name, '\t', _state(motion, args.human_readable))
         
     def on_maker(maker):
         if maker.switch_mode:
-             print "Maker:", maker.name, '\t', "Momentary State:", _state(maker, args.human_readable) 
+             print("Maker:", maker.name, '\t', "Momentary State:", _state(maker, args.human_readable))
         else:
-             print "Maker:", maker.name, '\t', "Persistent State:", _state(maker, args.human_readable)
+             print("Maker:", maker.name, '\t', "Persistent State:", _state(maker, args.human_readable))
         if maker.has_sensor:
              if args.human_readable:
                   if maker.sensor_state:
                        sensorstate = 'Sensor not triggered'
                   else:
                        sensorstate = 'Sensor triggered'
-                  print '\t\t\t', "Sensor:", sensorstate
+                  print('\t\t\t', "Sensor:", sensorstate)
              else:
-                  print '\t\t\t', "Sensor:", maker.sensor_state
+                  print('\t\t\t', "Sensor:", maker.sensor_state)
         else:
-             print '\t\t\t' "Sensor not present"
+             print('\t\t\t' "Sensor not present")
 
     def on_bridge(bridge):
-        print "Bridge:", bridge.name, '\t', _state(bridge, args.human_readable)
+        print("Bridge:", bridge.name, '\t', _state(bridge, args.human_readable))
         bridge.bridge_get_lights()
         for light in bridge.Lights:
-            print "Light:", light, '\t', bridge.light_get_state(bridge.Lights[light])
+            print("Light:", light, '\t', bridge.light_get_state(bridge.Lights[light]))
         for group in bridge.Groups:
-            print "Group:", group, '\t', bridge.group_get_state(bridge.Groups[group])
+            print("Group:", group, '\t', bridge.group_get_state(bridge.Groups[group]))
 
     scan(args, on_switch, on_motion, on_bridge, on_maker)
 
@@ -292,7 +292,7 @@ def server(args):
         from socketio.server import SocketIOServer
         from ouimeaux.server import app, initialize
     except ImportError:
-        print "ouimeaux server dependencies are not installed. Please run, e.g., 'pip install ouimeaux[server]'"
+        print("ouimeaux server dependencies are not installed. Please run, e.g., 'pip install ouimeaux[server]'")
         sys.exit(1)
     initialize(bind=getattr(args, 'bind', None))
     level = logging.INFO
@@ -305,7 +305,7 @@ def server(args):
         try:
             host, port = listen.split(':')
         except Exception:
-            print "Invalid bind address configuration:", listen
+            print("Invalid bind address configuration:", listen)
             sys.exit(1)
         SocketIOServer((host, int(port)), app,
                        policy_server=False,

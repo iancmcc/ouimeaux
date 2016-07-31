@@ -38,7 +38,7 @@ class UPnP(object):
 
     def _response_received(self, message, address):
         log.debug("Received a response from {0}:{1}".format(*address))
-        lines = message.splitlines()
+        lines = [x.decode() for x in message.splitlines()]
         lines.pop(0) # HTTP status
         headers = {}
         for line in lines:
@@ -78,7 +78,7 @@ class UPnP(object):
                                "MX:2",
                                'MAN:"ssdp:discover"',
                                "", "")).format(**self.__dict__)
-        self.server.sendto(request, (self.mcast_ip, self.mcast_port))
+        self.server.sendto(request.encode(), (self.mcast_ip, self.mcast_port))
 
 
 def test():
@@ -86,8 +86,8 @@ def test():
 
     @receiver(discovered)
     def handler(sender, **kwargs):
-        print "I GOT ONE"
-        print kwargs['address'], kwargs['headers']
+        print("I GOT ONE")
+        print(kwargs['address'], kwargs['headers'])
 
     upnp = UPnP()
     upnp.server.set_spawn(1)
