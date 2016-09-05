@@ -67,9 +67,10 @@ Usage: wemo switch NAME (on|off|toggle|status)""")
                 sys.exit(0)
 
     scan(args, on_switch)
-    # If we got here, we didn't find anything
-    print("No device found with that name.")
-    sys.exit(1)
+    if args.device != 'all':
+        # If we got here, we didn't find anything
+        print("No device found with that name.")
+        sys.exit(1)
 
 
 def light(args):
@@ -146,9 +147,10 @@ Dim must be between 0 and 255""")
                 sys.exit(0)
 
     scan(args, on_switch, on_motion, on_bridge)
-    # If we got here, we didn't find anything
-    print("No device or group found with that name.")
-    sys.exit(1)
+    if args.name != 'all':
+        # If we got here, we didn't find anything
+        print("No device or group found with that name.")
+        sys.exit(1)
 
 
 def make_matcher(device_name):
@@ -219,9 +221,10 @@ Usage: wemo maker NAME (on|off|toggle|sensor|switch)""")
                 sys.exit(0)
 
     scan(args, on_switch, on_motion, on_bridge, on_maker)
-    # If we got here, we didn't find anything
-    print("No device found with that name.")
-    sys.exit(1)
+    if args.device != 'all':
+        # If we got here, we didn't find anything
+        print("No device found with that name.")
+        sys.exit(1)
 
 
 def list_(args):
