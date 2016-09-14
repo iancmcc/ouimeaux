@@ -22,7 +22,7 @@ requirements = [x.strip() for x in open(here('requirements.txt')).readlines()]
 
 setup(
     name='ouimeaux',
-    version='0.8',
+    version='0.8.1',
     description='Open source control for Belkin WeMo devices',
     long_description=readme + '\n\n' + history,
     author='Ian McCracken',
@@ -57,7 +57,11 @@ setup(
         ]
     },
     extras_require = {
-        'server':  ["flask-restful", "gevent-socketio"],
+        'server':  [
+            "flask-restful",
+            "flask-basicauth",
+            "gevent-socketio",
+        ],
     },
     test_suite='tests',
 )

@@ -13,7 +13,9 @@ The necessary dependencies to run the server are not installed unless the
 Configuration
 -------------
 The IP and port to which the server will bind are specified by the ``listen``
-parameter in the configuration file. Default: ``0.0.0.0:5000``.
+parameter in the configuration file. Default: ``0.0.0.0:5000``.  
+Optionally, basic authentication can be enabled for the web server by 
+setting the ``auth`` parameter in the configuration file.
 
 Web App
 --------
