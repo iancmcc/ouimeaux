@@ -294,7 +294,7 @@ def server(args):
     except ImportError:
         print("ouimeaux server dependencies are not installed. Please run, e.g., 'pip install ouimeaux[server]'")
         sys.exit(1)
-    initialize(bind=getattr(args, 'bind', None))
+    initialize(bind=getattr(args, 'bind', None), auth=(WemoConfiguration().auth or None))
     level = logging.INFO
     if getattr(args, 'debug', False):
         level = logging.DEBUG

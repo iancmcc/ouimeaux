@@ -41,6 +41,10 @@ aliases:
 # Web app bind address
 #
 # listen: 0.0.0.0:5000
+
+# Require basic authentication (username:password) for the web app
+#
+# auth: admin:password
 """)
         with open(filename, 'r') as cfg:
             self._parsed = yaml.load(cfg)
@@ -56,3 +60,7 @@ aliases:
     @property
     def listen(self):
         return self._parsed.get('listen', None)
+
+    @property
+    def auth(self):
+        return self._parsed.get('auth', None)
