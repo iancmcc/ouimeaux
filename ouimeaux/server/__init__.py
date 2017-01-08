@@ -7,6 +7,9 @@ from flask import send_file, make_response, abort
 from flask.ext.restful import reqparse, abort, Api, Resource
 from flask.ext.basicauth import BasicAuth
 
+# add support for CORS - https://flask-cors.readthedocs.io/en/latest/
+from flask_cors import CORS, cross_origin
+
 
 from ouimeaux.signals import statechange
 from ouimeaux.device.switch import Switch
@@ -22,6 +25,10 @@ here = lambda *x: os.path.join(os.path.dirname(__file__), *x)
 
 app = Flask(__name__)
 api = Api(app)
+
+#add support for CORS
+CORS(app)
+
 
 ENV = None
 
