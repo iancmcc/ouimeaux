@@ -56,6 +56,7 @@ setup(
             'wemo = ouimeaux.cli:wemo'
         ]
     },
+    # added CORS as dependency
     extras_require = {
         'server':  [
             "flask-restful",
