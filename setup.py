@@ -61,6 +61,7 @@ setup(
             "flask-restful",
             "flask-basicauth",
             "gevent-socketio",
+            "flask-cors",
         ],
     },
     test_suite='tests',
