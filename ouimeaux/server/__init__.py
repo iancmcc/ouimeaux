@@ -141,7 +141,6 @@ class SocketNamespace(BaseNamespace):
 
     def on_join(self, data):
         statechange.connect(self.update_state,
-                            unique=False,
                             dispatch_uid=id(self))
         for device in ENV:
             self.update_state(device)
