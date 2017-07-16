@@ -16,7 +16,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-readme = open(here('README.rst')).read()
+readme = open(here('README.md')).read()
 history = open(here('HISTORY.rst')).read().replace('.. :changelog:', '')
 requirements = [x.strip() for x in open(here('requirements.txt')).readlines()]
 
