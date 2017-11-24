@@ -106,19 +106,21 @@ Usage: wemo light NAME (on|off|toggle|status)""")
                 elif args.state == "status":
                     print(bridge.light_get_state(bridge.Lights[light]))
                 else:
-                    if args.dim == None and args.state == "on":
-                        dim = bridge.light_get_state(bridge.Lights[light]).get('dim')
-                        state = 1
-                    elif args.state == "off":
+                    if args.state == "on":
+                        if args.dim is not None:
+                            if args.dim <= 255 and args.dim >= 0:
+                                dim = args.dim
+                                state = None
+                            else:
+                                print("""Invalid dim specified.
+Dim must be between 0 and 255""")
+                                sys.exit(1)
+                        else:
+                            dim = None
+                            state = 1
+                    else:
                         dim = None
                         state = 0
-                    elif args.dim <= 255 and args.dim >= 0:
-                        dim = args.dim
-                        state = 1
-                    else:
-                        print("""Invalid dim specified.
-Dim must be between 0 and 255""")
-                        sys.exit(1)
                     bridge.light_set_state(bridge.Lights[light], state=state, dim=dim)
                 if args.name != 'all':
                     sys.exit(0)
