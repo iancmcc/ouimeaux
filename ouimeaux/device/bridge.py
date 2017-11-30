@@ -88,13 +88,15 @@ class Bridge(Device):
             'dim' : dim
         }
 
-    def light_set_state(self, light, state=None, dim=None):
-        if state == None:
-            state = self.light_get_state(light).get('state')
-        if dim == None:
-            dim = self.light_get_state(light).get('dim')
+    # Specify either a state or dim - not both. When specifying dim you can also specify a transition duration to dim across.
+    # This resolves issues that appear to have been caused by a firmware update ~ mid 2016.
+    # Details at https://github.com/iancmcc/ouimeaux/issues/132.
+    def light_set_state(self, light, state=None, dim=None, transition_duration=0):
+        if not state == None:
+            sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;NO&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{devID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10006&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{state}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(devID=self.light_get_id(light),state=state)
+        elif not dim == None:
+            sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;NO&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{devID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10008&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{dim}:{duration}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(devID=self.light_get_id(light),dim=dim,duration=transition_duration)
 
-        sendState = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;DeviceStatus&gt;&lt;IsGroupAction&gt;NO&lt;/IsGroupAction&gt;&lt;DeviceID available=&quot;YES&quot;&gt;{devID}&lt;/DeviceID&gt;&lt;CapabilityID&gt;10006&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{state}&lt;/CapabilityValue&gt;&lt;CapabilityID&gt;10008&lt;/CapabilityID&gt;&lt;CapabilityValue&gt;{dim}&lt;/CapabilityValue&gt;&lt;/DeviceStatus&gt;'.format(devID=self.light_get_id(light),state=state,dim=dim)
         return self.bridge.SetDeviceStatus(DeviceStatusList=sendState)
 
     def group_set_state(self, group, state=None, dim=None):
