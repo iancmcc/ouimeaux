@@ -59,4 +59,6 @@ pip 9.0.1 from /usr/lib/python2.7/site-packages (python 2.7)
 
 ## Troubleshooting
 
+'wemo list' and 'wemo status' won't work if you're using a VPN. Disconnect from the VPN and the commands should work..
+
 Open an issue and I'll try to help.
