@@ -59,7 +59,7 @@ pip 9.0.1 from /usr/lib/python2.7/site-packages (python 2.7)
 
 ## Troubleshooting
 
-#### Using a VPN won't work
-`wemo list` and `wemo status` won't work if you're using a VPN. Disconnect from the VPN and the commands should work.
+#### Using a VPN 
+The `wemo` command won't be able to communicate with your devices if you're connected to a VPN. It may be redirecting UDP traffic somewhere else. Disconnect from the VPN and the tool should work.
 
 Open an issue and I'll try to help.
