@@ -59,4 +59,7 @@ pip 9.0.1 from /usr/lib/python2.7/site-packages (python 2.7)
 
 ## Troubleshooting
 
+#### Using a VPN 
+The `wemo` command won't be able to communicate with your devices if you're connected to a VPN. It may be redirecting UDP traffic somewhere else. Disconnect from the VPN and the tool should work.
+
 Open an issue and I'll try to help.
