@@ -6,6 +6,7 @@ from .discovery import UPnPLoopbackException
 from .environment import Environment
 from .config import WemoConfiguration
 from .utils import matcher
+from .device.insight import Insight
 
 reqlog = logging.getLogger("requests.packages.urllib3.connectionpool")
 reqlog.disabled = True
@@ -253,7 +254,10 @@ def list_(args):
 
 def status(args):
     def on_switch(switch):
-        print("Switch:", switch.name, '\t', _state(switch, args.human_readable))
+        if isinstance(switch, Insight):
+            print("Insight:", switch.name, '\t', _state(switch, args.human_readable), '\t', "Today:", switch.today_kwh + "kWh", '\t', "Now:", switch.current_power + "mW")
+        else:
+            print("Switch:", switch.name, '\t', _state(switch, args.human_readable))
 
     def on_motion(motion):
         print("Motion:", motion.name, '\t', _state(motion, args.human_readable))
