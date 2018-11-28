@@ -4,7 +4,7 @@ from xml.etree import cElementTree
 from functools import partial
 
 import gevent
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 
 from ouimeaux.utils import get_ip_address, requests_request
 from ouimeaux.device.insight import Insight
