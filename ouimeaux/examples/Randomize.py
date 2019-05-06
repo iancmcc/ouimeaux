@@ -23,7 +23,7 @@ if __name__ == "__main__":
             switchRND = env.get_switch( random.choice( env.list_switches() ) )
             print(switchRND)
             switchRND.toggle()
-            env.wait(90)
+            env.wait( random.randint(20,50) )
         
     except (KeyboardInterrupt, SystemExit):
         print("---------------")

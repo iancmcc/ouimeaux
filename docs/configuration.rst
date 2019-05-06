@@ -23,3 +23,7 @@ A configuration file in YAML format will be created at ``~/.wemo/config.yml``::
     # Web app bind address
     #
     # listen: 0.0.0.0:5000
+
+    # Require basic authentication (username:password) for the web app
+    #
+    # auth: admin:password

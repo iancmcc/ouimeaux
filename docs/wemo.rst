@@ -53,10 +53,6 @@ Aliases configured in the file will be accessible on the command line as well::
 Note: If an alias is used on the command line, fuzzy matching will not be
 attempted.
 
-You can also clear the device cache from the command line::
-    
-    $ wemo clear
-
 The ``wemo`` script will obey configured settings; they can also be overridden
 on the command line:
 
@@ -69,8 +65,8 @@ on the command line:
 ``-e``, ``--exact-match``
     Disable fuzzy matching
 
-``-f``, ``--no-cache``
-    Disable the device cache
-
 ``-v``, ``--human-readable``
     Print statuses as human-readable words
+
+``-t``, ``--timeout``
+    Time in seconds to allow for discovery

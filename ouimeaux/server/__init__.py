@@ -5,6 +5,10 @@ from flask import Flask, request, Response
 from flask import render_template, send_from_directory, url_for
 from flask import send_file, make_response, abort
 from flask.ext.restful import reqparse, abort, Api, Resource
+from flask.ext.basicauth import BasicAuth
+
+# add support for CORS - https://flask-cors.readthedocs.io/en/latest/
+from flask_cors import CORS, cross_origin
 
 
 from ouimeaux.signals import statechange
@@ -22,15 +26,28 @@ here = lambda *x: os.path.join(os.path.dirname(__file__), *x)
 app = Flask(__name__)
 api = Api(app)
 
+#add support for CORS
+CORS(app)
+
+
 ENV = None
 
 
-def initialize(bind=None):
+def initialize(bind=None, auth=None):
     global ENV
     if ENV is None:
         ENV = Environment(bind=bind)
         ENV.start()
         gevent.spawn(ENV.discover, 10)
+    if auth is not None:
+        elems = auth.split(':', 1)
+        username = elems[0]
+        password = elems[1]
+        print("Protected server with basic auth username/password: ", username, password)
+        app.config['BASIC_AUTH_USERNAME'] = username
+        app.config['BASIC_AUTH_PASSWORD'] = password
+        app.config['BASIC_AUTH_FORCE'] = True
+        basic_auth = BasicAuth(app)
 
 
 def serialize(device):
@@ -131,7 +148,6 @@ class SocketNamespace(BaseNamespace):
 
     def on_join(self, data):
         statechange.connect(self.update_state,
-                            unique=False,
                             dispatch_uid=id(self))
         for device in ENV:
             self.update_state(device)

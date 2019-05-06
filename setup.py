@@ -16,13 +16,13 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-readme = open(here('README.rst')).read()
+readme = open(here('README.md')).read()
 history = open(here('HISTORY.rst')).read().replace('.. :changelog:', '')
 requirements = [x.strip() for x in open(here('requirements.txt')).readlines()]
 
 setup(
     name='ouimeaux',
-    version='0.8',
+    version='0.8.2',
     description='Open source control for Belkin WeMo devices',
     long_description=readme + '\n\n' + history,
     author='Ian McCracken',
@@ -56,8 +56,14 @@ setup(
             'wemo = ouimeaux.cli:wemo'
         ]
     },
+    # added CORS as dependency
     extras_require = {
-        'server':  ["flask-restful", "gevent-socketio"],
+        'server':  [
+            "flask-restful",
+            "flask-basicauth",
+            "gevent-socketio",
+            "flask-cors",
+        ],
     },
     test_suite='tests',
 )
