@@ -47,7 +47,7 @@ aliases:
 # auth: admin:password
 """)
         with open(filename, 'r') as cfg:
-            self._parsed = yaml.load(cfg)
+            self._parsed = yaml.load(cfg, Loader=yaml.FullLoader)
 
     @property
     def aliases(self):
