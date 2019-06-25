@@ -371,4 +371,7 @@ def wemo():
     if getattr(args, 'debug', False):
         logging.basicConfig(level=logging.DEBUG)
 
-    args.func(args)
+    if hasattr(args, 'func'):
+        args.func(args)
+    else:
+        parser.print_help(sys.stderr)
