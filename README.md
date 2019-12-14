@@ -57,6 +57,50 @@ $ pip2 --version
 pip 9.0.1 from /usr/lib/python2.7/site-packages (python 2.7)
 ```
 
+## HTTP client version
+
+The `client.py` script provided by [BlackLight](https://github.com/BlackLight)
+allows the user to send simple commands to a device without the cumbersome
+(and [currently broken](https://github.com/iancmcc/ouimeaux/issues/193)) `Discoverer`
+object.
+
+Requirements: install requests:
+
+```
+pip install requests
+```
+
+You can run client.py in two modes:
+
+### Scan mode
+
+Will scan for available WeMo Switch devices on the network. Example:
+
+```
+python client.py --scan --subnet 192.168.1.0/24
+```
+
+### Action mode
+
+Will run an action on a specified device. Example:
+
+```
+python client.py --device 192.168.1.19 --on
+```
+
+With no `--on|--off|--toggle` action specified the script will return a JSON
+with the device info:
+
+```json
+{
+  "device": "192.168.1.19",
+  "name": "Lightbulbs",
+  "state": false
+}
+```
+
+Run `python client.py --help` for more info about the available options.
+
 ## Troubleshooting
 
 #### Using a VPN 
