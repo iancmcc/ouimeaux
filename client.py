@@ -9,12 +9,14 @@ import argparse
 import enum
 import ipaddress
 import json
+import multiprocessing
 import re
 import requests
 import socket
 import sys
 import textwrap
 
+from typing import Type
 from xml.dom.minidom import parseString
 
 
@@ -25,6 +27,78 @@ class SwitchAction(enum.Enum):
     GET_STATE = 'GetBinaryState'
     SET_STATE = 'SetBinaryState'
     GET_NAME = 'GetFriendlyName'
+
+
+class Worker(multiprocessing.Process):
+    _END_OF_STREAM = None
+
+    def __init__(self, request_queue: multiprocessing.Queue, response_queue=multiprocessing.Queue):
+        super().__init__()
+        self.request_queue = request_queue
+        self.response_queue = response_queue
+
+    def send_stop(self):
+        self.request_queue.put(self._END_OF_STREAM)
+
+    def process_response(self, resp):
+        self.response_queue.put(resp)
+
+
+class Workers:
+    def __init__(self, n_workers: int, worker_type: Type[Worker], *args, **kwargs):
+        self.request_queue = multiprocessing.Queue()
+        self.response_queue = multiprocessing.Queue()
+        self._workers = [worker_type(self.request_queue, self.response_queue,
+            *args, **kwargs) for _ in range(n_workers)]
+
+    def start(self):
+        for wrk in self._workers:
+            wrk.start()
+
+    def put(self, msg):
+        self.request_queue.put(msg)
+
+    def wait(self) -> list:
+        while self._workers:
+            for i, wrk in enumerate(self._workers):
+                if not self._workers[i].is_alive():
+                    self._workers.pop(i)
+                    break
+
+        ret = []
+        while not self.response_queue.empty():
+            ret.append(self.response_queue.get())
+        return ret
+
+    def send_stop(self):
+        for wrk in self._workers:
+            wrk.send_stop()
+
+
+class ScanWorker(Worker):
+    def __init__(self, request_queue: multiprocessing.Queue, response_queue: multiprocessing.Queue,
+            scan_timeout: float, connect_timeout: float, port: int = default_port):
+        super().__init__(request_queue, response_queue)
+        self.scan_timeout = scan_timeout
+        self.connect_timeout = connect_timeout
+        self.port = port
+
+    def run(self):
+        while True:
+            addr = self.request_queue.get()
+            if addr == self._END_OF_STREAM:
+                break
+
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(self.scan_timeout)
+                sock.connect((addr, self.port))
+                sock.close()
+                dev = get_device(addr, timeout=self.connect_timeout)
+                print('Found WeMo device: {}'.format(dev))
+                self.process_response(dev)
+            except OSError:
+                pass
 
 
 def _exec(device: str, action: SwitchAction, value=None, port: int = default_port, timeout: float = None):
@@ -99,9 +173,6 @@ def main():
     parser.add_argument('--connect-timeout', dest='connect_timeout', type=float, required=False, default=30.0,
                         help="Device connection timeout (default: 30 seconds)")
 
-    # parser.add_argument('--connect-timeout', dest='connect_timeout', required=False, default=None,
-    #                     help="Device connection timeout (default: 5 seconds)")
-
     parser.add_argument('--device', '-d', dest='device', required=False, default=None,
                         help="IP address of a device to control")
 
@@ -123,22 +194,17 @@ def main():
         if not opts.subnet:
             raise AttributeError('No --subnet specified for --scan mode')
 
-        devices = []
+        workers = Workers(10, ScanWorker, scan_timeout=opts.scan_timeout,
+                connect_timeout=opts.connect_timeout, port=opts.port)
+
+        workers.start()
 
         for addr in ipaddress.IPv4Network(opts.subnet):
-            try:
-                print('Scanning device {}'.format(addr.exploded))
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(opts.scan_timeout)
-                sock.connect((addr.exploded, opts.port))
-                sock.close()
-                dev = get_device(addr.exploded, timeout=opts.connect_timeout)
-                devices.append(dev)
-                print(dev)
-            except OSError as e:
-                pass
+            workers.put(addr.exploded)
 
-        print('Found {} WeMo devices'.format(len(devices)))
+        workers.send_stop()
+        devices = workers.wait()
+        print('\nFound {} WeMo devices'.format(len(devices)))
         print(json.dumps(devices, indent=2))
         return
 
