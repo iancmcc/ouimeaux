@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 
 NS = "{urn:schemas-upnp-org:event-1-0}"
 SUCCESS = '<html><body><h1>200 OK</h1></body></html>'
+SUCCESS_BINARY = SUCCESS.encode()
 
 
 class SubscriptionRegistry(object):
@@ -81,7 +82,7 @@ class SubscriptionRegistry(object):
             ('Content-Length', str(len(SUCCESS))),
             ('Connection', 'close')
         ])
-        yield SUCCESS
+        yield SUCCESS_BINARY
 
     def _event(self, device, type_, value):
         for t, callback in self._callbacks.get(device, ()):
