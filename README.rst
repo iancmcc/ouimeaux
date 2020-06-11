@@ -15,18 +15,6 @@ Features
 -  Simple responsive Web app provides device control on mobile
 -  Python API to interact with device at a low level
 
-About this fork
----------------
-
-The original repository can be found here:
-https://github.com/iancmcc/ouimeaux
-
-It doesn't appear to be maintained and it doesn't work with modern
-Python packages.
-
-It has been forked here so that I can include my modifications to
-``requirements.txt`` as well as document how to use it.
-
 Installation
 ------------
 
@@ -37,7 +25,7 @@ Installation
     $ virtualenv ouimeaux-env
     $ source ouimeaux-env/bin/activate
     $ cd ouimeaux-env
-    $ pip install git+https://github.com/syphoxy/ouimeaux.git
+    $ pip install git+https://github.com/iancmcc/ouimeaux.git
 
 At this point you should be able to use ``wemo`` and ``wemo server`` so
 long as you've activated your environment with
