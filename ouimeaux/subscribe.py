@@ -1,6 +1,6 @@
 from collections import defaultdict
 import logging
-from xml.etree import cElementTree
+from xml.etree import ElementTree
 from functools import partial
 
 import gevent
@@ -69,7 +69,7 @@ class SubscriptionRegistry(object):
             data = environ['wsgi.input'].read()
             # trim garbage from end, if any
             data = data.split("\n\n")[0]
-            doc = cElementTree.fromstring(data)
+            doc = ElementTree.fromstring(data)
             for propnode in doc.findall('./{0}property'.format(NS)):
                 for property_ in propnode.getchildren():
                     text = property_.text

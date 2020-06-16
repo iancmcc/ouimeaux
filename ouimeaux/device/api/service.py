@@ -1,5 +1,5 @@
 import logging
-from xml.etree import cElementTree as et
+from xml.etree import ElementTree as et
 
 from ...utils import requests_get, requests_post
 from .xsd import service as serviceParser
