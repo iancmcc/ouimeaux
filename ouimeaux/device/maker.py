@@ -1,6 +1,6 @@
 from datetime import datetime
 from ouimeaux.device import Device
-from xml.etree import cElementTree as et
+from xml.etree import ElementTree as et
 
 
 class Maker(Device):
