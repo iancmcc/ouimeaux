@@ -48,7 +48,7 @@ class Action(object):
         )
         response = requests_post(self.controlURL, body.strip(), headers=self.headers)
         d = {}
-        for r in et.fromstring(response.content).getchildren()[0].getchildren()[0].getchildren():
+        for r in list(list(list(et.fromstring(response.content))[0])[0]):
             d[r.tag] = r.text
         return d
 
