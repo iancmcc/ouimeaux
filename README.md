@@ -1,5 +1,12 @@
 # ouimeaux
 
+⚠️ ⚠️ ⚠️
+
+The ouimeaux project is no longer actively maintained. Please contact @iancmcc
+if you would like to be added to a list of maintained forks.
+
+⚠️ ⚠️ ⚠️
+
 Open source control for Belkin WeMo devices
 
 * Free software: BSD license
