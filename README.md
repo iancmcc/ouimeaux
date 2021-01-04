@@ -114,3 +114,7 @@ Run `python client.py --help` for more info about the available options.
 The `wemo` command won't be able to communicate with your devices if you're connected to a VPN. It may be redirecting UDP traffic somewhere else. Disconnect from the VPN and the tool should work.
 
 Open an issue and I'll try to help.
+
+#### Docker
+
+You need to be on the same network as your device. To do this ensure you are using `host` network, see [https://docs.docker.com/network/host/](https://docs.docker.com/network/host/) for more info. 
